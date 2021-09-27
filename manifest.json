@@ -2,7 +2,7 @@
   "name": "ItemFlow",
   "id": "1023907329538063379",
   "api": "1.0.0",
-  "main": "./code.js",
+  "main": "./src/code.js",
   "editorType": [
     "figma"
   ],

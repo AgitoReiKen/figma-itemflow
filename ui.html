@@ -1,8 +1,18 @@
+Stroke: <input id="stroke" type="number" label="Stroke" value="24"> 
 <button id="cancel">Cancel</button>
+<button id="test">Test</button>
 <script>
  
+ document.getElementById('stroke').onchange = () => {
+   const value = document.getElementById('stroke').value;
+   parent.postMessage({pluginmessage: { type: 'set-stroke', value: value } }, '*')
+ }
 document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+}
+document.getElementById('test').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'test' } }, '*')
+  
 }
 
 </script>

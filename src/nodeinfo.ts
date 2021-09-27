@@ -10,16 +10,15 @@ class NodeInfo {
 
   h: number;
 
-  r: number;
+  r: number; // TODO
 
-  constructor(id: string, x: number, y: number, w: number, h: number, r: number) {
+  constructor(id: string, x: number, y: number, w: number, h: number) {
     const t = this;
     t.id = id;
     t.x = x;
     t.y = y;
     t.w = w;
     t.h = h;
-    t.r = r;
   }
 
   public equal(to: NodeInfo): boolean {
@@ -41,7 +40,6 @@ function GetCurrentNodeInfo(): Array<NodeInfo> {
         x.y,
         x.width,
         x.height,
-        x.rotation,
       ),
     );
   });
