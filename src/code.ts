@@ -6,15 +6,16 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-import { PathArray, Svg, SVG } from '@svgdotjs/svg.js';
+import { GetSelection, UpdateSelection } from 'selection';
+import { CreateFlow } from './core';
 
 figma.showUI(__html__);
 // TODO check for removed
 let stroke = 24;
-
 /* todo update z index */
 figma.on('selectionchange', () => {
-  console.log(figma.currentPage.selection);
+  UpdateSelection();
+  console.log(GetSelection());
   // setInterval(UpdateFlow, 200);
   if (figma.currentPage.selection.length > 1) {
     // check if it doesnt have arrow attached
@@ -25,8 +26,7 @@ figma.on('selectionchange', () => {
     // 3
   }
 });
-figma.ui.onmessage = (msg) => {
-  console.log(msg);
+figma.ui.onmessage = (msg) => { 
   switch (msg.type) {
     case 'set-stroke': {
       stroke = msg.value;
@@ -37,6 +37,7 @@ figma.ui.onmessage = (msg) => {
       break;
     }
     case 'test': {
+      CreateFlow(figma.currentPage.selection[0], figma.currentPage.selection[1]);
       break;
     }
   }

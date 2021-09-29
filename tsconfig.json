@@ -9,6 +9,12 @@
       "./node_modules/@types",
       "./node_modules/@figma"
     ],
-    "moduleResolution": "node"
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
   }
 }

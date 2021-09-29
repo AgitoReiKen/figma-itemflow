@@ -5,7 +5,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-undef */
 
-import { PathArray, Svg, SVG } from '@svgdotjs/svg.js';
+import { setUncaughtExceptionCaptureCallback } from 'process';
 import snappoints from './snappoints';
 import Vector2D from './vector';
 
@@ -59,24 +59,42 @@ function UpdateFlow(): void {
 
 // #region Flow
 function CreateFlow(from: SceneNode, to: SceneNode): void {
-  const closestSnappoints = snappoints.GetClosestSnapPoints(from, to);
-  const distance = closestSnappoints[0].dist(closestSnappoints[1]);
-  let svg = SVG();
-  svg = svg.viewbox(0, 0, Math.abs(from.x - to.x), Math.abs(from.y - to.y));
-  svg.path(new PathArray([
-    ['M', 0, 0],
-    ['L', 100, 100],
-    ['z'],
-  ]));
-
-  const node = figma.createNodeFromSvg(svg.toString());
-  node.name = 'TEST';
-  figma.currentPage.appendChild(node);
-}
-
+  console.log(from);
+  console.log(to);
+  const sp = snappoints.GetClosestSnapPoints(from, to);
+  console.log(sp);
+  const distance = sp[0].dist(sp[1]);
+  console.log(distance);
+  let svg = figma.createVector();
+  
+  console.log(sp);
+  const width =  Math.abs(sp[0].x - sp[1].x);
+  const height = Math.abs(sp[0].y - sp[1].y);
+  console.log(`Width: ${width} | Height: ${height}`);
+  
+  svg.resize(width, height);
+  svg.vectorPaths = [{
+    windingRule: 'EVENODD',
+    data: `M 0 1 L 1 0 Z`,
+  }]; 
+  svg.name = 'ASDASDASDASDASDAS';
+  svg.strokeWeight = 2; 
+  svg.strokeStyleId = 'Dash';
+  svg.outlineStroke();
+  if (sp[0].x < sp[1].x) {
+    svg.rotation = 180;
+  }
+  let up = sp[0].y > sp[1].y;
+  console.log(`Up: ${up}`); 
+  svg.x = sp[0].x;
+  svg.y = up ? sp[1].y + height : sp[1].y - height; 
+  figma.currentPage.appendChild(svg); 
+} 
+ 
 function ForceUpdateFlow(): void {
   const line = figma.createLine();
 
   const frame = figma.createFrame();
 }
 // #endregion
+export { CreateFlow };
