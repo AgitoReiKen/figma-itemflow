@@ -1,7 +1,9 @@
 /* eslint-disable no-nested-ternary */
 import Vector2D from './vector';
 
-type SnapPointType = 'ltop' | 'top' | 'rtop' | 'right' | 'rbottom' | 'bottom' | 'lbottom' | 'left';
+//type SnapPointType = 'ltop' | 'top' | 'rtop' | 'right' | 'rbottom' | 'bottom' | 'lbottom' | 'left';
+
+type SnapPointType = 'top' |  'right' |  'bottom' | 'left';
 class SnapPoint extends Vector2D {
   _type: SnapPointType
   constructor(x: number,  y: number, _type: SnapPointType) {
@@ -13,34 +15,22 @@ class SnapPoint extends Vector2D {
 // TODO Rotation support
 function GetSnapPoint(x: SceneNode, _type: SnapPointType ) : SnapPoint {
   let result: SnapPoint = new SnapPoint(0, 0, _type);
-   if (_type === 'ltop') {
-    result.x = x.x;
-    result.y = x.y;
-  }
+  
   if (_type === 'top') {
     result.x = x.x + (x.width * 0.5);
     result.y = x.y;
   } 
-  if (_type === 'rtop') {
-    result.x = x.x + x.width;
-    result.y = x.y;
-  }
+   
   if (_type === 'right') {
     result.x = x.x + x.width;
     result.y = x.y + (x.height * 0.5);
   }
-  if (_type === 'rbottom') {
-    result.x = x.x + x.width;
-    result.y = x.y + x.height;
-   }
+   
   if (_type === 'bottom') {
     result.x = x.x + (x.width * 0.5);
     result.y = x.y + x.height;
   }
-  if (_type === 'lbottom') {
-    result.x = x.x;
-    result.y = x.y + x.height;
-  } 
+   
   if (_type === 'left') {
     result.x = x.x + x.width;
     result.y = x.y + (x.height * 0.5);
@@ -49,15 +39,11 @@ function GetSnapPoint(x: SceneNode, _type: SnapPointType ) : SnapPoint {
 }
 function GetSnapPointById(x: SceneNode, id: number) : SnapPoint {
   return GetSnapPoint(x,
-    id === 0 ? 'ltop'
-      : id === 1 ? 'top'
-        : id === 2 ? 'rtop'
-          : id === 3 ? 'right'
-            : id === 4 ? 'rbottom'
-              : id === 5 ? 'bottom'
-                : id === 6 ? 'lbottom' : 'left');
+      id === 0 ? 'top'
+          : id === 1 ? 'right'
+              : id === 2 ? 'bottom' : 'left');
 }
-function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<Vector2D> {
+function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<SnapPoint> {
 /*
   o - location / snappoint
   x - snappoint
@@ -71,13 +57,9 @@ function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<Vector2D> {
                   +
 */
   const Map: Array<Array<SnapPointType>> = [
-    ['ltop', 'rbottom'],
     ['top', 'bottom'],
-    ['rtop', 'lbottom'],
     ['right', 'left'],
-    ['rbottom', 'ltop'],
     ['bottom', 'top'],
-    ['lbottom', 'rtop'],
     ['left', 'right'],
    
 ]

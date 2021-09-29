@@ -71,7 +71,10 @@ function CreateFlow(from: SceneNode, to: SceneNode): void {
   const width =  Math.abs(sp[0].x - sp[1].x);
   const height = Math.abs(sp[0].y - sp[1].y);
   console.log(`Width: ${width} | Height: ${height}`);
-  
+  sp[0]._type.startsWith('l'); // left
+  sp[0]._type.startsWith('r'); // right
+  sp[0]._type.startsWith('top'); // top
+  sp[0]._type.startsWith('bottom'); // top
   svg.resize(width, height);
   svg.vectorPaths = [{
     windingRule: 'EVENODD',

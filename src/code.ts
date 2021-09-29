@@ -6,26 +6,14 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-import { GetSelection, UpdateSelection } from 'selection';
+import * as selection from './selection';
 import { CreateFlow } from './core';
 
 figma.showUI(__html__);
 // TODO check for removed
 let stroke = 24;
 /* todo update z index */
-figma.on('selectionchange', () => {
-  UpdateSelection();
-  console.log(GetSelection());
-  // setInterval(UpdateFlow, 200);
-  if (figma.currentPage.selection.length > 1) {
-    // check if it doesnt have arrow attached
-    // logic is to attach/remove from -2 to -1
-    // 0
-    // 1
-    // 2
-    // 3
-  }
-});
+selection.SetFigmaListener();
 figma.ui.onmessage = (msg) => { 
   switch (msg.type) {
     case 'set-stroke': {

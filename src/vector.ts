@@ -13,9 +13,6 @@ export default class Vector2D {
     const xd = this.x - to.x;
     const yd = this.y - to.y;
     return Math.sqrt(xd * xd + yd * yd);
-  }
-  angle(to: Vector2D): number {
-    
-  }
+  } 
 }
 // #endregion
