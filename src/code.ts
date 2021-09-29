@@ -7,13 +7,18 @@
 /* eslint-disable no-unused-vars */
 
 import * as selection from './selection';
-import { CreateFlow } from './core';
+import * as flow from './flow';
 
 figma.showUI(__html__);
 // TODO check for removed
 let stroke = 24;
 /* todo update z index */
-selection.SetFigmaListener();
+flow.SetEvents();
+selection.SetOnSelectionChanged((selection: Array<SceneNode>) => {
+  if (selection.length === 2) {
+    flow.CreateFlow(selection[0], selection[1], new flow.FlowSettings());
+  }
+});
 figma.ui.onmessage = (msg) => { 
   switch (msg.type) {
     case 'set-stroke': {
@@ -25,12 +30,8 @@ figma.ui.onmessage = (msg) => {
       break;
     }
     case 'test': {
-      CreateFlow(figma.currentPage.selection[0], figma.currentPage.selection[1]);
+       
       break;
     }
-  }
-  if (msg.type === 'create-rectangles') {
-
-  }
-  figma.closePlugin();
+  } 
 };

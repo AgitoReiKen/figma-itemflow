@@ -32,7 +32,7 @@ function GetSnapPoint(x: SceneNode, _type: SnapPointType ) : SnapPoint {
   }
    
   if (_type === 'left') {
-    result.x = x.x + x.width;
+    result.x = x.x;
     result.y = x.y + (x.height * 0.5);
   }
   return result;
@@ -74,7 +74,7 @@ function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<SnapPoint> 
   for (let i = 0; i < Map.length; i++) {
       const s1 = GetSnapPoint(from, Map[i][0]);
       const s2 = GetSnapPoint(to, Map[i][1])
-      const distance = s1.dist(s2);
+    const distance = s1.dist(s2); 
       if (distance < lastDistance) {
         result[0] = s1;
         result[1] = s2;
