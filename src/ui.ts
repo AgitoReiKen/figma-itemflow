@@ -9,20 +9,20 @@ window.onload = () => {
   */
   document.getElementById('itemflow-strokeWeight').onchange = () => {
     const { value } = document.getElementById('itemflow-strokeWeight') as HTMLDataElement;
-    parent.postMessage({ pluginmessage: { type: 'set-stroke-weight', value } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value } }, '*');
   };
   document.getElementById('itemflow-dashPattern').onchange = () => {
     const { value } = document.getElementById('itemflow-dashPattern') as HTMLDataElement;
-    parent.postMessage({ pluginmessage: { type: 'set-dash-pattern', value } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value } }, '*');
   };
   document.getElementById('itemflow-strokeCap0').onchange = () => {
     const value0 = (document.getElementById('itemflow-strokeCap0') as HTMLDataElement).value;
     const value1 = (document.getElementById('itemflow-strokeCap1') as HTMLDataElement).value;
-    parent.postMessage({ pluginmessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
   };
   document.getElementById('itemflow-strokeCap1').onchange = () => {
    const value0 = (document.getElementById('itemflow-strokeCap0') as HTMLDataElement).value;
     const value1 = (document.getElementById('itemflow-strokeCap1') as HTMLDataElement).value;
-    parent.postMessage({ pluginmessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
   }; 
 };

@@ -13,26 +13,27 @@ figma.showUI(__html__);
 // TODO check for removed 
 const flowSettings: flow.FlowSettings = new flow.FlowSettings();
 /* todo update z index */
-flow.SetEvents();
+flow.Enable();
 selection.SetOnSelectionChanged((selection: Array<SceneNode>) => {
   if (selection.length === 2) {
     flow.CreateFlow(selection[0], selection[1], flowSettings);
   }
 });
-figma.ui.onmessage = (msg) => { 
+figma.on('close', () => { flow.Disable();});
+figma.ui.onmessage = (msg) => {
+  console.log(msg);
   switch (msg.type) {
     case 'set-stroke-weight': {
-      flowSettings.weight = msg.value;
-      console.log(`SetStrokeWeight: ${msg.value}`);
+      flowSettings.weight = parseInt(msg.value); 
       break;
     }
     case 'set-stroke-cap': {
-      flowSettings.strokeCap[0] = msg.value[0];
-      flowSettings.strokeCap[1] = msg.value[1];
+      flowSettings.strokeCap[0] = msg.value[0] as StrokeCap;
+      flowSettings.strokeCap[1] = msg.value[1] as StrokeCap;
       break;
     }
     case 'set-dash-pattern': {
-      flowSettings.dashPattern = msg.value;
+      flowSettings.dashPattern = [parseInt(msg.value)];
       break;
     }
     case 'cancel': {

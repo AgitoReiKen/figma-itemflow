@@ -5,14 +5,14 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-console */
 /* eslint-disable no-undef */
-import { GetSelection, SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
-import { setUncaughtExceptionCaptureCallback } from 'process';
+import {  SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
 import snappoints from './snappoints';
-import Vector2D from './vector';
+import Vector2D from './vector'; 
 
 const PLUGIN_NAME = 'ItemFrame';
 const FLOW_DATA = 'IF';
 const FLOW_COORDS_DATA = 'IFC';
+const FLOW_SETTINGS_DATA = 'IFS';
 const FRAME_DATA = PLUGIN_NAME;
 const UNDEFINED_ID = 'undefined';  
 const FRAME_OFFSET = new Vector2D(-99999, -99999);
@@ -47,13 +47,28 @@ function GetPluginFrame(): FrameNode {
 }
 
 function UpdatePluginFrame(): void {
-  figma.currentPage.insertChild(0, GetPluginFrame());
-} 
+  figma.currentPage.insertChild(figma.currentPage.children.length, GetPluginFrame());
+}
+class Color {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+  constructor(r: number, g: number, b: number, a: number) {
+    
+    console.assert(r <= 1.0 && g <= 1.0 && b <= 1.0 && a <= 1.0);
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+  }
+}
 // #endregion
 class FlowSettings {
   strokeCap: Array<StrokeCap> = ['NONE', 'ARROW_EQUILATERAL'];
   dashPattern: Array<number> = [];
   weight: number = 1;
+  color: Color;
 }
 class FlowCoordsData { 
   snapPoints: Array<Vector2D> = [];
@@ -66,6 +81,17 @@ function GetFlowCoordsData(node: SceneNode): FlowCoordsData | null {
   if (data.length !== 0) {
     const parsed = JSON.parse(data);
     return parsed as FlowCoordsData;
+  }
+  return null;
+}
+function SetFlowSettings(node: SceneNode, settings: FlowSettings): void {
+  node.setPluginData(FLOW_SETTINGS_DATA, JSON.stringify(settings));
+}
+function GetFlowSettings(node: SceneNode): FlowSettings | null {
+    const data = node.getPluginData(FLOW_SETTINGS_DATA);
+  if (data.length !== 0) {
+    const parsed = JSON.parse(data);
+    return parsed as FlowSettings;
   }
   return null;
 }
@@ -103,23 +129,20 @@ function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
     return false;
   }) as VectorNode | null;
 }
-
-// #region Flow
-function UpdateFlow(flow: VectorNode): void {
-  const data = GetFlowData(flow);
-  const from = figma.getNodeById(data[0]) as SceneNode;
-  const to = figma.getNodeById(data[1]) as SceneNode;
-  if (from.removed) {
-    RemoveFlows(from);
-  }
-  if (to.removed) {
-    RemoveFlows(to);
-  }
-  if (!to.removed && !from.removed) {
-    UpdateFlowPosition(flow, from, to);
-  }
+function UpdateFlowAppearance(flow: VectorNode) : void {
+  const flowSettings = GetFlowSettings(flow);
+  SetStrokeCap(flow, flowSettings.strokeCap[0], flowSettings.strokeCap[1]);
+  flow.dashPattern = flowSettings.dashPattern;
+  flow.strokeWeight = flowSettings.weight;
+  const copy = JSON.parse(JSON.stringify(flow.strokes));
+  console.log(copy[0]);
+  copy[0].color.r = 0;
+  copy[0].color.g = 1;
+  copy[0].color.b = 1;
+  flow.strokes = copy;
+ 
 }
-function UpdateFlowPosition(flow: VectorNode, from: SceneNode, to: SceneNode): void {
+function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode): void {
   const sp = snappoints.GetClosestSnapPoints(from, to);
   const x = sp[0].x - sp[1].x;
   const y = sp[0].y - sp[1].y;
@@ -142,11 +165,32 @@ function UpdateFlowPosition(flow: VectorNode, from: SceneNode, to: SceneNode): v
       windingRule: 'EVENODD',
       data: `M 0 0 L ${x} ${y} Z`,
     }];
+    
+    UpdateFlowAppearance(flow);
+
     let data: FlowCoordsData = new FlowCoordsData();
     data.snapPoints = [new Vector2D(sp[0].x, sp[0].y), new Vector2D(sp[1].x, sp[1].y)];
     SetFlowCoordsData(flow, data);
+
+    flow.name = `${from.name} -> ${to.name}`; 
   }
 }
+// #region Flow
+function UpdateFlow(flow: VectorNode): void {
+  const data = GetFlowData(flow);
+  const from = figma.getNodeById(data[0]) as SceneNode;
+  const to = figma.getNodeById(data[1]) as SceneNode;
+  if (from.removed) {
+    RemoveFlows(from);
+  }
+  if (to.removed) {
+    RemoveFlows(to);
+  }
+  if (!to.removed && !from.removed) {
+    UpdateFlow_Internal(flow, from, to);
+  }
+}
+ 
 function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): void {
   let svg = null;
   svg = GetFlow(from, to);
@@ -154,12 +198,11 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
     svg = figma.createVector();
     GetPluginFrame().appendChild(svg);  
   }
-  UpdateFlowPosition(svg, from, to);
-  svg.strokeWeight = settings.weight;
-  svg.dashPattern = settings.dashPattern;
-  SetStrokeCap(svg, settings.strokeCap[0], settings.strokeCap[1]);
+  // Order is matter :)
+  SetFlowSettings(svg, settings);
   SetFlowData(svg, [from.id, to.id]);
-  svg.name = `${from.name} -> ${to.name}`; 
+  UpdateFlow(svg);
+  UpdateFlowAppearance(svg); // Also called in updateflow, but as updateflow is optimized for changes it doesn't change the appearance until snappoint is moved
 }
 
 function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) { 
@@ -170,16 +213,16 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) {
   }
   node.vectorNetwork = copy;
 }
-
-let lastSelection: Array<SceneNode>;
-function SetEvents(): void {
-  setInterval(() => { 
+let updateFlowIntervalId = -1;
+let updateFrameIntervalId = -1; 
+function Enable(): void {
+  updateFlowIntervalId = setInterval(() => { 
     GetAllFlows().forEach(x => {
       UpdateFlow(x);
     });
-  }, 200);
-  
-  setInterval(() => {
+  }, 50);
+   
+  updateFrameIntervalId = setInterval(() => {
     UpdatePluginFrame();
   }, 1000);
   SetOnSelectionItemAdded((item: SceneNode) => {
@@ -191,5 +234,13 @@ function SetEvents(): void {
     }
   });
 }
+function Disable(): void {
+  if (updateFlowIntervalId !== -1) {
+    clearInterval(updateFlowIntervalId);
+  }
+  if (updateFrameIntervalId !== -1) {
+    clearInterval(updateFrameIntervalId);
+  }
+}
 // #endregion
-export { FlowSettings, SetEvents, CreateFlow };
+export { FlowSettings, Enable, Disable ,CreateFlow };
