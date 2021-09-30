@@ -10,28 +10,34 @@ import * as selection from './selection';
 import * as flow from './flow';
 
 figma.showUI(__html__);
-// TODO check for removed
-let stroke = 24;
+// TODO check for removed 
+const flowSettings: flow.FlowSettings = new flow.FlowSettings();
 /* todo update z index */
 flow.SetEvents();
 selection.SetOnSelectionChanged((selection: Array<SceneNode>) => {
   if (selection.length === 2) {
-    flow.CreateFlow(selection[0], selection[1], new flow.FlowSettings());
+    flow.CreateFlow(selection[0], selection[1], flowSettings);
   }
 });
 figma.ui.onmessage = (msg) => { 
   switch (msg.type) {
-    case 'set-stroke': {
-      stroke = msg.value;
+    case 'set-stroke-weight': {
+      flowSettings.weight = msg.value;
+      console.log(`SetStrokeWeight: ${msg.value}`);
+      break;
+    }
+    case 'set-stroke-cap': {
+      flowSettings.strokeCap[0] = msg.value[0];
+      flowSettings.strokeCap[1] = msg.value[1];
+      break;
+    }
+    case 'set-dash-pattern': {
+      flowSettings.dashPattern = msg.value;
       break;
     }
     case 'cancel': {
       figma.closePlugin();
       break;
-    }
-    case 'test': {
-       
-      break;
-    }
+    } 
   } 
 };

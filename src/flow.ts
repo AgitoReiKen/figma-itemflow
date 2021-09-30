@@ -27,8 +27,7 @@ function GetPluginFrame(): FrameNode {
   } else {
     found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
   }
-
-    console.log(`Found: ${found}`);
+ 
   if (found === null) {
     const pluginFrame = figma.createFrame();
     pluginFrame.resize(1, 1);
@@ -39,10 +38,9 @@ function GetPluginFrame(): FrameNode {
     pluginFrame.clipsContent = false;
     pluginFrame.setPluginData(FRAME_DATA, '1'); 
     found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-    console.log(`Found2: ${found}`);
+  
     DATA_NODE_ID = found.id;
-  } else {
-    console.log(`Found# : ${found}`);
+  } else { 
     DATA_NODE_ID = found.id;
   }
   return found;
@@ -57,10 +55,24 @@ class FlowSettings {
   dashPattern: Array<number> = [];
   weight: number = 1;
 }
-function SetPluginData(node: SceneNode, data: Array<string>) : void{
+class FlowCoordsData { 
+  snapPoints: Array<Vector2D> = [];
+}
+function SetFlowCoordsData(node: SceneNode, data: FlowCoordsData): void {
+  node.setPluginData(FLOW_COORDS_DATA, JSON.stringify(data));
+}
+function GetFlowCoordsData(node: SceneNode): FlowCoordsData | null {
+  const data = node.getPluginData(FLOW_COORDS_DATA);
+  if (data.length !== 0) {
+    const parsed = JSON.parse(data);
+    return parsed as FlowCoordsData;
+  }
+  return null;
+}
+function SetFlowData(node: SceneNode, data: Array<string>) : void{
   node.setPluginData(FLOW_DATA, JSON.stringify(data));
 }
-function GetPluginData(node: SceneNode) : Array<string> {
+function GetFlowData(node: SceneNode) : Array<string> {
   const data = node.getPluginData(FLOW_DATA); 
   if (data.length != 0) {
       const parsed = JSON.parse(data) as Array<string>;
@@ -70,7 +82,7 @@ function GetPluginData(node: SceneNode) : Array<string> {
  } 
 function RemoveFlows(of: SceneNode): void {
   let flows = GetPluginFrame().findChildren(x => {
-    const data = GetPluginData(x);
+    const data = GetFlowData(x);
     if (data.length === 2) {
       return data.find(x => x === of.id) !== null;
     }
@@ -79,12 +91,12 @@ function RemoveFlows(of: SceneNode): void {
   flows.forEach(x => x.remove());
 }
 function GetAllFlows(): Array<VectorNode> {
-  return GetPluginFrame().findChildren(x => { return GetPluginData(x).length === 2; }) as Array<VectorNode>;
+  return GetPluginFrame().findChildren(x => { return GetFlowData(x).length === 2; }) as Array<VectorNode>;
 }
  
 function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
   return figma.currentPage.findOne(x => {
-    const data = GetPluginData(x);
+    const data = GetFlowData(x);
     if (data.length === 2) {
       return data[0] === from.id && data[1] === to.id;
     }
@@ -94,7 +106,7 @@ function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
 
 // #region Flow
 function UpdateFlow(flow: VectorNode): void {
-  const data = GetPluginData(flow);
+  const data = GetFlowData(flow);
   const from = figma.getNodeById(data[0]) as SceneNode;
   const to = figma.getNodeById(data[1]) as SceneNode;
   if (from.removed) {
@@ -111,17 +123,17 @@ function UpdateFlowPosition(flow: VectorNode, from: SceneNode, to: SceneNode): v
   const sp = snappoints.GetClosestSnapPoints(from, to);
   const x = sp[0].x - sp[1].x;
   const y = sp[0].y - sp[1].y;
-  
-  const vectorX = parseFloat(flow.vectorPaths[0].data.split(' ')[4]);
-  console.log(flow.vectorPaths[0].data);
-  console.log(flow.vectorPaths[0].data.split(''));
-  const vectorY = parseFloat(flow.vectorPaths[0].data.split(' ')[5]);
-  const xChanged = vectorX !== x;
-  const yChanged = vectorY !== y;
- 
-  if (xChanged || yChanged) {
-    
-    console.log(`${x} - ${vectorX} | ${y} - ${vectorY}`);
+   
+  const coordsData = GetFlowCoordsData(flow);
+  let snapPointsChanged = true; 
+  if (coordsData !== null) {
+  snapPointsChanged =
+      coordsData.snapPoints[0].x !== sp[0].x ||
+      coordsData.snapPoints[0].y !== sp[0].y ||
+      coordsData.snapPoints[1].x !== sp[1].x ||
+      coordsData.snapPoints[1].y !== sp[1].y;
+  }
+  if (snapPointsChanged) { 
     const flowX = sp[0].x - x - FRAME_OFFSET.x;
     const flowY = sp[0].y - y - FRAME_OFFSET.y; 
     flow.x = flowX;
@@ -130,7 +142,9 @@ function UpdateFlowPosition(flow: VectorNode, from: SceneNode, to: SceneNode): v
       windingRule: 'EVENODD',
       data: `M 0 0 L ${x} ${y} Z`,
     }];
-      
+    let data: FlowCoordsData = new FlowCoordsData();
+    data.snapPoints = [new Vector2D(sp[0].x, sp[0].y), new Vector2D(sp[1].x, sp[1].y)];
+    SetFlowCoordsData(flow, data);
   }
 }
 function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): void {
@@ -144,7 +158,7 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
   svg.strokeWeight = settings.weight;
   svg.dashPattern = settings.dashPattern;
   SetStrokeCap(svg, settings.strokeCap[0], settings.strokeCap[1]);
-  SetPluginData(svg, [from.id, to.id]);
+  SetFlowData(svg, [from.id, to.id]);
   svg.name = `${from.name} -> ${to.name}`; 
 }
 
@@ -159,8 +173,7 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) {
 
 let lastSelection: Array<SceneNode>;
 function SetEvents(): void {
-  setInterval(() => {
-    console.log('Timeout');
+  setInterval(() => { 
     GetAllFlows().forEach(x => {
       UpdateFlow(x);
     });
