@@ -12,6 +12,7 @@ import Vector2D from './vector';
 
 const PLUGIN_NAME = 'ItemFrame';
 const FLOW_DATA = 'IF';
+const FLOW_COORDS_DATA = 'IFC';
 const FRAME_DATA = PLUGIN_NAME;
 const UNDEFINED_ID = 'undefined';  
 const FRAME_OFFSET = new Vector2D(-99999, -99999);
@@ -33,7 +34,7 @@ function GetPluginFrame(): FrameNode {
     pluginFrame.resize(1, 1);
     pluginFrame.x = FRAME_OFFSET.x;
     pluginFrame.y = FRAME_OFFSET.y;
-    pluginFrame.locked = true;
+    pluginFrame.locked = false;
     pluginFrame.name = PLUGIN_NAME;
     pluginFrame.clipsContent = false;
     pluginFrame.setPluginData(FRAME_DATA, '1'); 
@@ -60,10 +61,10 @@ function SetPluginData(node: SceneNode, data: Array<string>) : void{
   node.setPluginData(FLOW_DATA, JSON.stringify(data));
 }
 function GetPluginData(node: SceneNode) : Array<string> {
-  const data = node.getPluginData(FLOW_DATA);
-  if (typeof (data) !== undefined) {
-    const parsed = JSON.parse(data) as Array<string>;
-    return parsed;
+  const data = node.getPluginData(FLOW_DATA); 
+  if (data.length != 0) {
+      const parsed = JSON.parse(data) as Array<string>;
+      return parsed;
   }
   return [];
  } 
@@ -83,13 +84,11 @@ function GetAllFlows(): Array<VectorNode> {
  
 function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
   return figma.currentPage.findOne(x => {
-    const data = x.getPluginData(FRAME_DATA);
-    if (typeof (data) !== undefined) {
-      const parsed = JSON.parse(data) as string[];
-      if (parsed.length === 2) {
-        return parsed[0] === from.id && parsed[1] === to.id;
-      }
+    const data = GetPluginData(x);
+    if (data.length === 2) {
+      return data[0] === from.id && data[1] === to.id;
     }
+    return false;
   }) as VectorNode | null;
 }
 
@@ -110,30 +109,43 @@ function UpdateFlow(flow: VectorNode): void {
 }
 function UpdateFlowPosition(flow: VectorNode, from: SceneNode, to: SceneNode): void {
   const sp = snappoints.GetClosestSnapPoints(from, to);
-  const x = sp[0].x - sp[1].x ;
+  const x = sp[0].x - sp[1].x;
   const y = sp[0].y - sp[1].y;
   
-  flow.x = sp[0].x - x - FRAME_OFFSET.x;
-  flow.y = sp[0].y - y - FRAME_OFFSET.y;
-  flow.vectorPaths = [{
-    windingRule: 'EVENODD',
-    data: `M 0 0 L ${x} ${y} Z`,
-  }]; 
+  const vectorX = parseFloat(flow.vectorPaths[0].data.split(' ')[4]);
+  console.log(flow.vectorPaths[0].data);
+  console.log(flow.vectorPaths[0].data.split(''));
+  const vectorY = parseFloat(flow.vectorPaths[0].data.split(' ')[5]);
+  const xChanged = vectorX !== x;
+  const yChanged = vectorY !== y;
+ 
+  if (xChanged || yChanged) {
+    
+    console.log(`${x} - ${vectorX} | ${y} - ${vectorY}`);
+    const flowX = sp[0].x - x - FRAME_OFFSET.x;
+    const flowY = sp[0].y - y - FRAME_OFFSET.y; 
+    flow.x = flowX;
+    flow.y = flowY; 
+    flow.vectorPaths = [{
+      windingRule: 'EVENODD',
+      data: `M 0 0 L ${x} ${y} Z`,
+    }];
+      
+  }
 }
 function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): void {
   let svg = null;
   svg = GetFlow(from, to);
   if (svg === null) {
     svg = figma.createVector();
-    GetPluginFrame().appendChild(svg);
-    svg.strokeWeight = settings.weight; 
-    svg.dashPattern = settings.dashPattern;
-    SetStrokeCap(svg, settings.strokeCap[0], settings.strokeCap[1]);
-    SetPluginData(svg, [from.id, to.id]);
+    GetPluginFrame().appendChild(svg);  
   }
-   
-  svg.name = `${from.name} -> ${to.name}`;
   UpdateFlowPosition(svg, from, to);
+  svg.strokeWeight = settings.weight;
+  svg.dashPattern = settings.dashPattern;
+  SetStrokeCap(svg, settings.strokeCap[0], settings.strokeCap[1]);
+  SetPluginData(svg, [from.id, to.id]);
+  svg.name = `${from.name} -> ${to.name}`; 
 }
 
 function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) { 
@@ -147,14 +159,14 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) {
 
 let lastSelection: Array<SceneNode>;
 function SetEvents(): void {
-  setTimeout(() => {
-    const selection = GetSelection();
+  setInterval(() => {
+    console.log('Timeout');
     GetAllFlows().forEach(x => {
       UpdateFlow(x);
     });
-  }, 100);
+  }, 200);
   
-  setTimeout(() => {
+  setInterval(() => {
     UpdatePluginFrame();
   }, 1000);
   SetOnSelectionItemAdded((item: SceneNode) => {
