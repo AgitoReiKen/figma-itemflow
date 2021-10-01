@@ -3,5 +3,6 @@
         "activityBar.background": "#253204",
         "titleBar.activeBackground": "#344605",
         "titleBar.activeForeground": "#F6FDE5"
-    }
+    },
+    "todo-tree.tree.showBadges": false
 }

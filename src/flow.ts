@@ -68,7 +68,8 @@ class FlowSettings {
   strokeCap: Array<StrokeCap> = ['NONE', 'ARROW_EQUILATERAL'];
   dashPattern: Array<number> = [];
   weight: number = 1;
-  color: Color;
+  color: Color = new Color(0, 0, 0, 1);
+  bezier: boolean = true;
 }
 class FlowCoordsData { 
   snapPoints: Array<Vector2D> = [];
@@ -130,26 +131,28 @@ function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
   }) as VectorNode | null;
 }
 function UpdateFlowAppearance(flow: VectorNode) : void {
-  const flowSettings = GetFlowSettings(flow);
+  const flowSettings = GetFlowSettings(flow); 
   SetStrokeCap(flow, flowSettings.strokeCap[0], flowSettings.strokeCap[1]);
   flow.dashPattern = flowSettings.dashPattern;
   flow.strokeWeight = flowSettings.weight;
   const copy = JSON.parse(JSON.stringify(flow.strokes));
   console.log(copy[0]);
-  copy[0].color.r = 0;
-  copy[0].color.g = 1;
-  copy[0].color.b = 1;
+  copy[0].color.r = flowSettings.color.r;
+  copy[0].color.g = flowSettings.color.g;
+  copy[0].color.b = flowSettings.color.b;
+  copy[0].opacity = flowSettings.color.a;
   flow.strokes = copy;
  
 }
-function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode): void {
+function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode, force: boolean): void {
   const sp = snappoints.GetClosestSnapPoints(from, to);
   const x = sp[0].x - sp[1].x;
   const y = sp[0].y - sp[1].y;
    
   const coordsData = GetFlowCoordsData(flow);
-  let snapPointsChanged = true; 
-  if (coordsData !== null) {
+  let snapPointsChanged = true;
+  // doesnt matter to calc changes if force update
+  if (!force && coordsData !== null) {
   snapPointsChanged =
       coordsData.snapPoints[0].x !== sp[0].x ||
       coordsData.snapPoints[0].y !== sp[0].y ||
@@ -160,11 +163,59 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode): 
     const flowX = sp[0].x - x - FRAME_OFFSET.x;
     const flowY = sp[0].y - y - FRAME_OFFSET.y; 
     flow.x = flowX;
-    flow.y = flowY; 
-    flow.vectorPaths = [{
-      windingRule: 'EVENODD',
-      data: `M 0 0 L ${x} ${y} Z`,
-    }];
+    flow.y = flowY;
+     
+    if (GetFlowSettings(flow).bezier) {
+      
+      const cX: [number, number] = [0, 0];
+      const cY: [number, number] = [0, 0];
+    
+      
+      // TODO Rotation support
+      // // ENDPOINT IF FROM IS RIGHT
+      // const fromRadian = (from as LayoutMixin).rotation * (3.14 / 180);
+      // const toRadian = (to as LayoutMixin).rotation * (3.14 / 180);
+     
+      // if (sp[0]._type === 'right') {
+      //   cX[0] = x2 * Math.cos(toRadian) + (y2 * Math.sin(toRadian));  
+      //   cY[0] = x2 * (2/5 * 3.14) * Math.sin(-1 * toRadian) + (y2 * Math.sin(toRadian));
+      // }
+      // //STARTPOINT IF TO IS LEFT
+      // if (sp[1]._type === 'left') {
+      //   cX[1] = x2 * Math.cos(fromRadian);  
+      //   cY[1] = x2 * (2/5*3.14) * Math.sin(-1 * toRadian) + y2 * 2  * Math.cos(fromRadian);
+      // } 
+      const y2 = y * 0.5;
+      const x2 = x * 0.5;
+      if (sp[0]._type === 'right' || sp[0]._type === 'left') {
+        cX[1] = x2;
+        cY[1] = y;
+      }
+      if (sp[0]._type === 'top' || sp[0]._type === 'bottom') {
+        cX[1] = x;
+        cY[1] = y2;
+      }
+      if (sp[1]._type === 'right' || sp[1]._type === 'left') {
+        cX[0] = x2;
+        cY[0] = 0;
+      }
+      if (sp[1]._type === 'top' || sp[1]._type === 'bottom') {
+        cX[0] = 0;
+        cY[0] = y2;
+      }
+      console.log(sp);
+      console.log([cX, cY]);
+      flow.vectorPaths = [{
+        windingRule: 'EVENODD',
+        data: `M 0 0 C ${cX[0]} ${cY[0]} ${cX[1]} ${cY[1]} ${x} ${y}`,
+      }];
+    } else {
+      flow.vectorPaths = [{
+        windingRule: 'EVENODD',
+          data: `M 0 0 L ${x} ${y}`,
+      }];
+    }
+     
     
     UpdateFlowAppearance(flow);
 
@@ -175,19 +226,24 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode): 
     flow.name = `${from.name} -> ${to.name}`; 
   }
 }
-// #region Flow
-function UpdateFlow(flow: VectorNode): void {
+function UpdateFlow(flow: VectorNode, force: boolean = false): void {
   const data = GetFlowData(flow);
   const from = figma.getNodeById(data[0]) as SceneNode;
   const to = figma.getNodeById(data[1]) as SceneNode;
-  if (from.removed) {
-    RemoveFlows(from);
-  }
-  if (to.removed) {
-    RemoveFlows(to);
-  }
-  if (!to.removed && !from.removed) {
-    UpdateFlow_Internal(flow, from, to);
+  
+ 
+  if (from === null || to === null) {
+    flow.remove();
+  } else {
+    if (from.removed) {
+      RemoveFlows(from);
+    }
+    if (to.removed) {
+      RemoveFlows(to);
+    }
+    if (!to.removed && !from.removed) {
+      UpdateFlow_Internal(flow, from, to, force);
+    }
   }
 }
  
@@ -201,15 +257,17 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
   // Order is matter :)
   SetFlowSettings(svg, settings);
   SetFlowData(svg, [from.id, to.id]);
-  UpdateFlow(svg);
-  UpdateFlowAppearance(svg); // Also called in updateflow, but as updateflow is optimized for changes it doesn't change the appearance until snappoint is moved
+  UpdateFlow(svg, true);
 }
 
+// TODO Circle 
 function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) { 
   const copy = JSON.parse(JSON.stringify(node.vectorNetwork));
+  
   if ("strokeCap" in copy.vertices[copy.vertices.length - 1]) {
-      copy.vertices[copy.vertices.length - 1].strokeCap = start;
-      copy.vertices[0].strokeCap = end;
+    copy.vertices[copy.vertices.length - 1].strokeCap = start;
+    copy.vertices[0].strokeCap = end;
+   
   }
   node.vectorNetwork = copy;
 }
@@ -220,7 +278,7 @@ function Enable(): void {
     GetAllFlows().forEach(x => {
       UpdateFlow(x);
     });
-  }, 50);
+  }, 100);
    
   updateFrameIntervalId = setInterval(() => {
     UpdatePluginFrame();
@@ -242,5 +300,4 @@ function Disable(): void {
     clearInterval(updateFrameIntervalId);
   }
 }
-// #endregion
 export { FlowSettings, Enable, Disable ,CreateFlow };

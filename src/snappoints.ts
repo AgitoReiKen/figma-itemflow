@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+import { sign } from 'crypto';
+import { pipeline } from 'stream';
 import Vector2D from './vector';
 
 //type SnapPointType = 'ltop' | 'top' | 'rtop' | 'right' | 'rbottom' | 'bottom' | 'lbottom' | 'left';
@@ -11,29 +13,45 @@ class SnapPoint extends Vector2D {
     this._type = _type;
   }
 }
-// #region SnapPoints 
-// TODO Rotation support
+// #region SnapPoints  
 function GetSnapPoint(x: SceneNode, _type: SnapPointType ) : SnapPoint {
   let result: SnapPoint = new SnapPoint(0, 0, _type);
-  
+  const pi = 3.14 / 180;
+  const radian  = (x as LayoutMixin).rotation * pi;
   if (_type === 'top') {
-    result.x = x.x + (x.width * 0.5);
-    result.y = x.y;
+    /*
+      x` = x + (w / 2 * cos(rotation))
+      y` = y - (w / 2 * sin(rotation))
+    */
+    result.x = x.x + (x.width * 0.5 * Math.cos(radian));
+    result.y = x.y - (x.width * 0.5 * Math.sin(radian));
   } 
    
   if (_type === 'right') {
-    result.x = x.x + x.width;
-    result.y = x.y + (x.height * 0.5);
+    /*
+      x` = x + (w * cos(rotation)) + (h/2 * sin(rotation))
+      y` = y + (h/2 * cos(rotation)) - (w * sin(rotation))
+    */
+    result.x = x.x + (x.width * Math.cos(radian)) + (x.height * 0.5 * Math.sin(radian));
+    result.y = x.y + (x.height * 0.5 * Math.cos(radian)) - (x.width * Math.sin(radian));
   }
    
   if (_type === 'bottom') {
-    result.x = x.x + (x.width * 0.5);
-    result.y = x.y + x.height;
+    /* 
+      x` = x + (w/2 * cos(rotation)) + (h * sin(rotation))
+      y` = y - (w/2 * sin(rotation)) + (h * cos(rotation))
+    */
+    result.x = x.x + (x.width * 0.5 * Math.cos(radian)) + (x.height * Math.sin(radian));
+    result.y = x.y + (x.height * Math.cos(radian)) - (x.width * 0.5 * Math.sin(radian));
   }
    
   if (_type === 'left') {
-    result.x = x.x;
-    result.y = x.y + (x.height * 0.5);
+    /*
+      x` = x + (h/2 * sin(rotation)) 
+      y` = y + (h/2 * cos(rotation))
+    */
+    result.x = x.x + (x.height * 0.5 * Math.sin(radian));
+    result.y = x.y + (x.height * 0.5 * Math.cos(radian));
   }
   return result;
 }
@@ -55,31 +73,23 @@ function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<SnapPoint> 
     |           |
     +-----x-----+
                   +
-*/
-  const Map: Array<Array<SnapPointType>> = [
-    ['top', 'bottom'],
-    ['right', 'left'],
-    ['bottom', 'top'],
-    ['left', 'right'],
-   
-]
+*/ 
   const result: Array<SnapPoint> = [
     GetSnapPointById(from, 0),
     GetSnapPointById(to, 0),
-  ]; 
-  // on top 
-  // on bottom
-  // on the same 
+  ];  
   let lastDistance: number = 99999999;
-  for (let i = 0; i < Map.length; i++) {
-      const s1 = GetSnapPoint(from, Map[i][0]);
-      const s2 = GetSnapPoint(to, Map[i][1])
-    const distance = s1.dist(s2); 
+  for (let i = 0; i < 4; i++) {
+    const s1 = GetSnapPointById(from, i);
+    for (let i2 = 0; i2 < 4; i2++) {
+      const s2 = GetSnapPointById(to, i2)
+      const distance = s1.dist(s2);
       if (distance < lastDistance) {
         result[0] = s1;
         result[1] = s2;
         lastDistance = distance;
-      } 
+      }
+    }
   }
   return result;
 }

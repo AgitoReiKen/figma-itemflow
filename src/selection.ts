@@ -1,7 +1,7 @@
 import { copyFileSync } from "fs";
 
 let lastSelection: Array<SceneNode> = [];
-type OnSelectionChangedType = (selection: Array<SceneNode>) => void;
+type OnSelectionChangedType = (selection: Array<SceneNode>) => void
 type OnSelectionItemRemovedType = (item: SceneNode) => void;
 type OnSelectionItemAddedType = (item: SceneNode) => void;
 let OnSelectionChanged: OnSelectionChangedType;
@@ -9,6 +9,7 @@ let OnSelectionItemRemoved: OnSelectionItemRemovedType;
 let OnSelectionItemAdded: OnSelectionItemAddedType;
 function UpdateSelection() {
     const selection = figma.currentPage.selection;
+    const lastSelectionLength = lastSelection.length;
     let result: Array<SceneNode> = [];
     //removed
     if (lastSelection.length > selection.length) {
@@ -38,7 +39,7 @@ function UpdateSelection() {
     else {
         
     }
-    if (lastSelection.length === 2) {
+    if (lastSelectionLength === 1 && lastSelection.length === 2) {
         OnSelectionChanged(lastSelection);
     }
 }
