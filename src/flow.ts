@@ -5,7 +5,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-console */
 /* eslint-disable no-undef */
-import {  SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
+import { SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
 import snappoints from './snappoints';
 import Vector2D from './vector'; 
 
@@ -49,6 +49,7 @@ function GetPluginFrame(): FrameNode {
 function UpdatePluginFrame(): void {
   figma.currentPage.insertChild(figma.currentPage.children.length, GetPluginFrame());
 }
+ 
 class Color {
   r: number;
   g: number;
@@ -131,12 +132,13 @@ function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
   }) as VectorNode | null;
 }
 function UpdateFlowAppearance(flow: VectorNode) : void {
-  const flowSettings = GetFlowSettings(flow); 
+  const flowSettings = GetFlowSettings(flow);
+ 
   SetStrokeCap(flow, flowSettings.strokeCap[0], flowSettings.strokeCap[1]);
   flow.dashPattern = flowSettings.dashPattern;
   flow.strokeWeight = flowSettings.weight;
   const copy = JSON.parse(JSON.stringify(flow.strokes));
-  console.log(copy[0]);
+  
   copy[0].color.r = flowSettings.color.r;
   copy[0].color.g = flowSettings.color.g;
   copy[0].color.b = flowSettings.color.b;
@@ -202,9 +204,7 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode, f
       if (sp[1]._type === 'top' || sp[1]._type === 'bottom') {
         cX[0] = 0;
         cY[0] = y2;
-      }
-      console.log(sp);
-      console.log([cX, cY]);
+      } 
       flow.vectorPaths = [{
         windingRule: 'EVENODD',
         data: `M 0 0 C ${cX[0]} ${cY[0]} ${cX[1]} ${cY[1]} ${x} ${y}`,
@@ -274,6 +274,7 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end:  StrokeCap) {
 let updateFlowIntervalId = -1;
 let updateFrameIntervalId = -1; 
 function Enable(): void {
+  GetPluginFrame().locked = true;
   updateFlowIntervalId = setInterval(() => { 
     GetAllFlows().forEach(x => {
       UpdateFlow(x);
@@ -283,9 +284,11 @@ function Enable(): void {
   updateFrameIntervalId = setInterval(() => {
     UpdatePluginFrame();
   }, 1000);
+  
   SetOnSelectionItemAdded((item: SceneNode) => {
-    
+   
   });
+
   SetOnSelectionItemRemoved((item: SceneNode) => {
     if (item.removed) {
       RemoveFlows(item);
@@ -300,4 +303,4 @@ function Disable(): void {
     clearInterval(updateFrameIntervalId);
   }
 }
-export { FlowSettings, Enable, Disable ,CreateFlow };
+export { FlowSettings, GetPluginFrame, Enable, Disable ,CreateFlow };

@@ -1,12 +1,6 @@
 /* eslint-disable no-restricted-globals */
 window.onload = () => {
-
-  /*
- <input id="itemflow-strokeWeight" type="number" label="Stroke" value="8">
-    <input id="itemflow-dashPattern" type="number" label="Stroke" value="0">
-    <input id="itemflow-strokeCap0" type="text" label="StrokeCap Begin" value="NONE">
-    <input id="itemflow-strokeCap1" type="text" label="Stroke" value="NONE">
-  */
+ 
   document.getElementById('itemflow-strokeWeight').onchange = () => {
     const { value } = document.getElementById('itemflow-strokeWeight') as HTMLDataElement;
     parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value } }, '*');
@@ -37,4 +31,12 @@ window.onload = () => {
     const value = (document.getElementById('itemflow-bezier') as HTMLInputElement).checked;
     parent.postMessage({ pluginMessage: { type: 'set-bezier', value: value } }, '*');
   };
-};
+  document.getElementById('itemflow-enabled').onchange = () => {
+    const value = (document.getElementById('itemflow-enabled') as HTMLInputElement).checked;
+    parent.postMessage({ pluginMessage: { type: 'set-enabled', value: value } }, '*');
+  }; 
+  document.getElementById('itemflow-framelocked').onchange = () => {
+    const value = (document.getElementById('itemflow-framelocked') as HTMLInputElement).checked;
+    parent.postMessage({ pluginMessage: { type: 'set-framelocked', value: value } }, '*');
+  };
+}; 

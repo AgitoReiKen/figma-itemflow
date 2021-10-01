@@ -1,5 +1,4 @@
-import { copyFileSync } from "fs";
-
+ 
 let lastSelection: Array<SceneNode> = [];
 type OnSelectionChangedType = (selection: Array<SceneNode>) => void
 type OnSelectionItemRemovedType = (item: SceneNode) => void;
@@ -14,10 +13,9 @@ function UpdateSelection() {
     //removed
     if (lastSelection.length > selection.length) {
         lastSelection.forEach((x, i) => {
-            const found = selection.find((y, i2) => {  return x.id === y.id } )
-            if (found != null) {
-                result.push(x);
-                
+            const found = selection.find((y, i2) => { return x.id === y.id }) !== undefined;
+            if (found) {
+                result.push(x); 
             }
         });
         result.forEach(x => {
@@ -28,16 +26,21 @@ function UpdateSelection() {
     //added
     else if (lastSelection.length < selection.length) {
         selection.forEach((x, i) => {
-            const found = lastSelection.find((y, i2) => { return x.id === y.id })
-            if (found == null) {
+            const found = lastSelection.find((y, i2) => { return x.id === y.id }) !== undefined;
+            if (!found) {
                 lastSelection.push(x);
                 OnSelectionItemAdded(x);
             }
         });
     }
-    //bug
-    else {
-        
+    //changed
+    else if (selection.length === lastSelection.length && selection.length === 1) {
+        if (selection[0].id != lastSelection[0].id) {
+            result.push(selection[0]);
+            OnSelectionItemAdded(selection[0]);
+            OnSelectionItemRemoved(lastSelection[0]);
+            lastSelection = result;
+        }
     }
     if (lastSelectionLength === 1 && lastSelection.length === 2) {
         OnSelectionChanged(lastSelection);
@@ -55,17 +58,7 @@ function SetOnSelectionItemAdded(callback: OnSelectionItemAddedType){
 function SetOnSelectionChanged(callback: OnSelectionChangedType): void {
     OnSelectionChanged = callback;
     figma.on('selectionchange', () => {
-        UpdateSelection();
-        
-        // setInterval(UpdateFlow, 200);
-        if (figma.currentPage.selection.length > 1) {
-            // check if it doesnt have arrow attached
-            // logic is to attach/remove from -2 to -1
-            // 0
-            // 1
-            // 2
-            // 3
-        }
+        UpdateSelection(); 
     });
 }
 export { SetOnSelectionChanged, SetOnSelectionItemAdded, SetOnSelectionItemRemoved, GetSelection, UpdateSelection };

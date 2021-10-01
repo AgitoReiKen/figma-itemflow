@@ -1,3 +1,4 @@
+import { GetPluginFrame } from './flow';
 /* eslint-disable default-case */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-nested-ternary */
@@ -23,8 +24,7 @@ selection.SetOnSelectionChanged((selection: Array<SceneNode>) => {
   }
 });
 figma.on('close', () => { flow.Disable();});
-figma.ui.onmessage = (msg) => {
-  console.log(msg);
+figma.ui.onmessage = (msg) => { 
   switch (msg.type) {
     case 'set-stroke-weight': {
       flowSettings.weight = parseInt(msg.value); 
@@ -42,8 +42,7 @@ figma.ui.onmessage = (msg) => {
       //#ABACAD
       flowSettings.color.r = getColor(1, msg.value); // AB 
       flowSettings.color.g = getColor(3, msg.value); // AC
-      flowSettings.color.b = getColor(5, msg.value); // AD
-      console.log(flowSettings);
+      flowSettings.color.b = getColor(5, msg.value); // AD 
       break;
     }
     case 'set-color-opacity': {
@@ -56,6 +55,18 @@ figma.ui.onmessage = (msg) => {
     }
     case 'set-bezier': { 
       flowSettings.bezier = msg.value;
+      break;
+    }
+    case 'set-enabled': { 
+      if (msg.value) {
+        flow.Enable()
+      } else {
+        flow.Disable();
+      }
+      break;
+    }
+    case 'set-framelocked': { 
+      GetPluginFrame().locked = msg.value;
       break;
     }
     case 'cancel': {
