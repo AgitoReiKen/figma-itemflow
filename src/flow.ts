@@ -114,7 +114,9 @@ function RemoveFlows(of: SceneNode): void {
   const flows = GetPluginFrame().findChildren((x) => {
     const data = GetFlowData(x);
     if (data.length === 2) {
-      return data.find((y) => y === of.id) !== null;
+      const res = typeof (data.find((y) => y === of.id)) !== 'undefined';
+
+      return res;
     }
     return false;
   });
