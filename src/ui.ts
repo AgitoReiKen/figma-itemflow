@@ -230,6 +230,6 @@ window.onload = () => {
     parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value: parseInt(_this.value, 10) } }, '*');
   };
   document.getElementById('github-link').onclick = () => {
-    window.open('https://github.com/project');
+    window.open('https://github.com/AgitoReiKen/figma-itemflow');
   };
 };
