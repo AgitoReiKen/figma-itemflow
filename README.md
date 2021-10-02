@@ -1,8 +1,13 @@
 
 <h1> Item Flow (Figma plugin) </h1>
-This plugin allows to create relationships between nodes by visible connecting them with lines
+This plugin allows to create relationships between nodes by visible connecting them with lines.
+Primary purpose is  a design of a complex system
 
+<h2>Setup:</h2> 
+ 
+<code> npm i </code>
 
-npm install -g typescript
-npm install -g eslint
-npm run dev
+<h2>Run:</h2> 
+1. <code> npm run dev </code> 
+
+2. In **Figma** ->  Import plugin from manifest...
