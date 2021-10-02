@@ -22,16 +22,13 @@ function GetPluginFrame(): FrameNode {
 
   if (found === null) {
     const pluginFrame = figma.createFrame();
-    pluginFrame.resize(1, 1);
-    pluginFrame.x = FRAME_OFFSET.x;
-    pluginFrame.y = FRAME_OFFSET.y;
-    pluginFrame.locked = false;
-    pluginFrame.name = PLUGIN_NAME;
-    pluginFrame.clipsContent = false;
+
+    pluginFrame.locked = true;
     pluginFrame.setPluginData(FRAME_DATA, '1');
     found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-
     DATA_NODE_ID = found.id;
+    // eslint-disable-next-line no-use-before-define
+    UpdatePluginFrame();
   } else {
     DATA_NODE_ID = found.id;
   }
@@ -39,7 +36,13 @@ function GetPluginFrame(): FrameNode {
 }
 
 function UpdatePluginFrame(): void {
-  figma.currentPage.insertChild(figma.currentPage.children.length, GetPluginFrame());
+  const pluginFrame = GetPluginFrame();
+  figma.currentPage.insertChild(figma.currentPage.children.length, pluginFrame);
+  pluginFrame.resize(1, 1);
+  pluginFrame.x = FRAME_OFFSET.x;
+  pluginFrame.y = FRAME_OFFSET.y;
+  pluginFrame.name = PLUGIN_NAME;
+  pluginFrame.clipsContent = false;
 }
 
 class Color {
@@ -72,7 +75,7 @@ class FlowSettings {
   bezier: boolean = true;
 }
 class FlowCoordsData {
-  snapPoints: Array<Vector2D> = [];
+  nodesAbsoluteTransform: Array<Vector2D> = [];
 }
 function SetFlowCoordsData(node: SceneNode, data: FlowCoordsData): void {
   node.setPluginData(FLOW_COORDS_DATA, JSON.stringify(data));
@@ -159,20 +162,29 @@ function UpdateFlowAppearance(flow: VectorNode) : void {
 // eslint-disable-next-line camelcase
 function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
   force: boolean): void {
-  const sp = snappoints.GetClosestSnapPoints(from, to);
-  const x = sp[0].x - sp[1].x;
-  const y = sp[0].y - sp[1].y;
+  const fromAbsoluteTransform = new Vector2D(
+    from.absoluteTransform[0][2],
+    from.absoluteTransform[1][2],
+  );
+  const toAbsoluteTransform = new Vector2D(
+    to.absoluteTransform[0][2],
+    to.absoluteTransform[1][2],
+  );
 
   const coordsData = GetFlowCoordsData(flow);
-  let snapPointsChanged = true;
-  // doesnt matter to calc changes if force update
-  if (!force && coordsData !== null) {
-    snapPointsChanged = coordsData.snapPoints[0].x !== sp[0].x
-      || coordsData.snapPoints[0].y !== sp[0].y
-      || coordsData.snapPoints[1].x !== sp[1].x
-      || coordsData.snapPoints[1].y !== sp[1].y;
+  let transformChanged = true;
+  if (coordsData !== null) {
+    transformChanged = coordsData.nodesAbsoluteTransform[0].x !== fromAbsoluteTransform.x
+    || coordsData.nodesAbsoluteTransform[0].y !== fromAbsoluteTransform.y
+    || coordsData.nodesAbsoluteTransform[1].x !== toAbsoluteTransform.x
+    || coordsData.nodesAbsoluteTransform[1].y !== toAbsoluteTransform.y;
   }
-  if (snapPointsChanged) {
+  // doesnt matter to calc changes if force update
+  if (force || transformChanged) {
+    const sp = snappoints.GetClosestSnapPoints(from, to);
+    const x = sp[0].x - sp[1].x;
+    const y = sp[0].y - sp[1].y;
+
     const flowX = sp[0].x - x - FRAME_OFFSET.x;
     const flowY = sp[0].y - y - FRAME_OFFSET.y;
     flow.x = flowX;
@@ -228,7 +240,7 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
     UpdateFlowAppearance(flow);
 
     const data: FlowCoordsData = new FlowCoordsData();
-    data.snapPoints = [new Vector2D(sp[0].x, sp[0].y), new Vector2D(sp[1].x, sp[1].y)];
+    data.nodesAbsoluteTransform = [fromAbsoluteTransform, toAbsoluteTransform];
     SetFlowCoordsData(flow, data);
 
     flow.name = `${from.name} -> ${to.name}`;
@@ -269,34 +281,68 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
 
 let updateFlowIntervalId = -1;
 let updateFrameIntervalId = -1;
-function Enable(): void {
-  GetPluginFrame().locked = true;
-  updateFlowIntervalId = setInterval(() => {
-    GetAllFlows().forEach((x) => {
-      UpdateFlow(x);
-    });
-  }, 100);
+let updateIntervalsIntervalId = -1;
+let enabled = false;
+function UpdateFlowInterval(intervalMS: number = 50, force: boolean = false) {
+  if (intervalMS < 50) intervalMS = 50;
+  if (force || enabled) {
+    if (updateFlowIntervalId !== -1) clearInterval(updateFlowIntervalId);
+    updateFlowIntervalId = setInterval(() => {
+      if (enabled) {
+        // const now1 = Date.now();
+        const _nodes = GetAllFlows();
+        _nodes.forEach((x) => {
+          UpdateFlow(x);
+        });
+        // const now2 = Date.now();
+        // console.log(`${(now2 - now1).toString()}ms. for ${_nodes.length} nodes`);
+      }
+    }, intervalMS);
+  }
+}
+function UpdateIntervals() {
+  UpdateFlowInterval(GetAllFlows().length, true); // now
+  updateIntervalsIntervalId = setInterval(() => {
+    if (enabled) {
+      UpdateFlowInterval(GetAllFlows().length); // each 10 seconds
+    }
+  }, 10000);
 
   updateFrameIntervalId = setInterval(() => {
-    UpdatePluginFrame();
+    if (enabled) {
+      UpdatePluginFrame();
+    }
   }, 1000);
-
+}
+function Enable(): void {
+  enabled = true;
+  UpdateIntervals();
   SetOnSelectionItemAdded((item: SceneNode) => {
-
+    // Prevent main frame selecting
+    if (item.id === GetPluginFrame().id) {
+      figma.currentPage.selection = [];
+    }
   });
 
   SetOnSelectionItemRemoved((item: SceneNode) => {
-    if (item.removed) {
+    if (item !== null && item.removed) {
       RemoveFlows(item);
     }
   });
 }
 function Disable(): void {
+  enabled = false;
+  if (updateIntervalsIntervalId !== -1) {
+    clearInterval(updateIntervalsIntervalId);
+    updateIntervalsIntervalId = -1;
+  }
   if (updateFlowIntervalId !== -1) {
     clearInterval(updateFlowIntervalId);
+    updateFlowIntervalId = -1;
   }
   if (updateFrameIntervalId !== -1) {
     clearInterval(updateFrameIntervalId);
+    updateFrameIntervalId = -1;
   }
 }
 export {

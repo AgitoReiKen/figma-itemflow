@@ -220,14 +220,14 @@ window.onload = () => {
     if (_this.value.length === 0) {
       _this.value = '1';
     }
-    parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value: parseInt(_this.value) } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value: parseInt(_this.value, 10) } }, '*');
   };
   document.getElementById('dash-pattern').onchange = () => {
     const _this = document.getElementById('dash-pattern') as HTMLInputElement;
     if (_this.value.length === 0) {
       _this.value = '0';
     }
-    parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value: parseInt(_this.value) } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value: parseInt(_this.value, 10) } }, '*');
   };
   document.getElementById('github-link').onclick = () => {
     window.open('https://github.com/project');

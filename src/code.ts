@@ -9,14 +9,17 @@ const flowSettings: flow.FlowSettings = new flow.FlowSettings();
 
 /* todo update z index */
 flow.Enable();
+flow.GetPluginFrame().locked = true;
 selection.SetOnSelectionChanged((_selection: Array<SceneNode>) => {
   if (_selection.length === 2) {
     flow.CreateFlow(_selection[0], _selection[1], flowSettings);
   }
 });
-figma.on('close', () => { flow.Disable(); });
+figma.on('close', () => {
+  flow.Disable();
+  figma.closePlugin();
+});
 figma.ui.onmessage = (msg) => {
-  console.log(msg);
   switch (msg.type) {
     case 'set-stroke-weight': {
       flowSettings.weight = parseInt(msg.value, 10);
@@ -29,7 +32,6 @@ figma.ui.onmessage = (msg) => {
       if (msg.value[1] !== null) {
         flowSettings.strokeCap[1] = msg.value[1] as StrokeCap;
       }
-      console.log(flowSettings);
       break;
     }
     case 'set-color': {
@@ -65,10 +67,6 @@ figma.ui.onmessage = (msg) => {
     }
     case 'set-framelocked': {
       GetPluginFrame().locked = msg.value;
-      break;
-    }
-    case 'cancel': {
-      figma.closePlugin();
       break;
     }
   }
