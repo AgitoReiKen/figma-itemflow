@@ -5,76 +5,530 @@ var __webpack_exports__ = {};
   \*******************/
 /* eslint-disable no-restricted-globals */
 window.onload = () => {
-    document.getElementById('itemflow-strokeWeight').onchange = () => {
-        const { value } = document.getElementById('itemflow-strokeWeight');
-        parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value } }, '*');
-    };
-    document.getElementById('itemflow-dashPattern').onchange = () => {
-        const { value } = document.getElementById('itemflow-dashPattern');
-        parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value } }, '*');
-    };
-    document.getElementById('itemflow-strokeCap0').onchange = () => {
-        const value0 = document.getElementById('itemflow-strokeCap0').value;
-        const value1 = document.getElementById('itemflow-strokeCap1').value;
-        parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
-    };
-    document.getElementById('itemflow-strokeCap1').onchange = () => {
-        const value0 = document.getElementById('itemflow-strokeCap0').value;
-        const value1 = document.getElementById('itemflow-strokeCap1').value;
-        parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
-    };
-    document.getElementById('itemflow-color').onchange = () => {
-        const value = document.getElementById('itemflow-color').value;
-        parent.postMessage({ pluginMessage: { type: 'set-color', value } }, '*');
-    };
-    document.getElementById('itemflow-colorOpacity').onchange = () => {
-        const value = parseInt(document.getElementById('itemflow-colorOpacity').value) / 100;
-        parent.postMessage({ pluginMessage: { type: 'set-color-opacity', value: value } }, '*');
-    };
-    document.getElementById('itemflow-bezier').onchange = () => {
-        const value = document.getElementById('itemflow-bezier').checked;
-        parent.postMessage({ pluginMessage: { type: 'set-bezier', value: value } }, '*');
-    };
-    document.getElementById('itemflow-enabled').onchange = () => {
-        const value = document.getElementById('itemflow-enabled').checked;
-        parent.postMessage({ pluginMessage: { type: 'set-enabled', value: value } }, '*');
-    };
-    document.getElementById('itemflow-framelocked').onchange = () => {
-        const value = document.getElementById('itemflow-framelocked').checked;
-        parent.postMessage({ pluginMessage: { type: 'set-framelocked', value: value } }, '*');
-    };
+    // document.getElementById('itemflow-strokeWeight').onchange = () => {
+    //   const { value } = document.getElementById('itemflow-strokeWeight') as HTMLDataElement;
+    //   parent.postMessage({ pluginMessage: { type: 'set-stroke-weight', value } }, '*');
+    // };
+    // document.getElementById('itemflow-dashPattern').onchange = () => {
+    //   const { value } = document.getElementById('itemflow-dashPattern') as HTMLDataElement;
+    //   parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value } }, '*');
+    // };
+    // document.getElementById('itemflow-strokeCap0').onchange = () => {
+    //   const value0 = (document.getElementById('itemflow-strokeCap0') as HTMLDataElement).value;
+    //   const value1 = (document.getElementById('itemflow-strokeCap1') as HTMLDataElement).value;
+    //   parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
+    // };
+    // document.getElementById('itemflow-strokeCap1').onchange = () => {
+    //   const value0 = (document.getElementById('itemflow-strokeCap0') as HTMLDataElement).value;
+    //   const value1 = (document.getElementById('itemflow-strokeCap1') as HTMLDataElement).value;
+    //   parent.postMessage({ pluginMessage: { type: 'set-stroke-cap', value: [value0, value1] } }, '*');
+    // }; 
+    // document.getElementById('itemflow-color').onchange = () => {
+    //   const value = (document.getElementById('itemflow-color') as HTMLDataElement).value;
+    //   parent.postMessage({ pluginMessage: { type: 'set-color', value } }, '*'); 
+    // }; 
+    // document.getElementById('itemflow-colorOpacity').onchange = () => {
+    //   const value = parseInt((document.getElementById('itemflow-colorOpacity') as HTMLDataElement).value) / 100;
+    //   parent.postMessage({ pluginMessage: { type: 'set-color-opacity', value: value } }, '*');
+    // };
+    // document.getElementById('itemflow-bezier').onchange = () => {
+    //   const value = (document.getElementById('itemflow-bezier') as HTMLInputElement).checked;
+    //   parent.postMessage({ pluginMessage: { type: 'set-bezier', value: value } }, '*');
+    // };
+    // document.getElementById('itemflow-enabled').onchange = () => {
+    //   const value = (document.getElementById('itemflow-enabled') as HTMLInputElement).checked;
+    //   parent.postMessage({ pluginMessage: { type: 'set-enabled', value: value } }, '*');
+    // }; 
+    // document.getElementById('itemflow-framelocked').onchange = () => {
+    //   const value = (document.getElementById('itemflow-framelocked') as HTMLInputElement).checked;
+    //   parent.postMessage({ pluginMessage: { type: 'set-framelocked', value: value } }, '*');
+    // };
 };
 
 /******/ })()
 ;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidWkuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQSxnQkFBZ0IsUUFBUTtBQUN4Qiw2QkFBNkIsaUJBQWlCLG9DQUFvQztBQUNsRjtBQUNBO0FBQ0EsZ0JBQWdCLFFBQVE7QUFDeEIsNkJBQTZCLGlCQUFpQixtQ0FBbUM7QUFDakY7QUFDQTtBQUNBO0FBQ0E7QUFDQSw2QkFBNkIsaUJBQWlCLG1EQUFtRDtBQUNqRztBQUNBO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIsbURBQW1EO0FBQ2pHO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIsNEJBQTRCO0FBQzFFO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIsMkNBQTJDO0FBQ3pGO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIsb0NBQW9DO0FBQ2xGO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIscUNBQXFDO0FBQ25GO0FBQ0E7QUFDQTtBQUNBLDZCQUE2QixpQkFBaUIseUNBQXlDO0FBQ3ZGO0FBQ0EiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9JdGVtRmxvdy8uL3NyYy91aS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiBlc2xpbnQtZGlzYWJsZSBuby1yZXN0cmljdGVkLWdsb2JhbHMgKi9cclxud2luZG93Lm9ubG9hZCA9ICgpID0+IHtcclxuICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1zdHJva2VXZWlnaHQnKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgICAgICBjb25zdCB7IHZhbHVlIH0gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctc3Ryb2tlV2VpZ2h0Jyk7XHJcbiAgICAgICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LXN0cm9rZS13ZWlnaHQnLCB2YWx1ZSB9IH0sICcqJyk7XHJcbiAgICB9O1xyXG4gICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWRhc2hQYXR0ZXJuJykub25jaGFuZ2UgPSAoKSA9PiB7XHJcbiAgICAgICAgY29uc3QgeyB2YWx1ZSB9ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWRhc2hQYXR0ZXJuJyk7XHJcbiAgICAgICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LWRhc2gtcGF0dGVybicsIHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctc3Ryb2tlQ2FwMCcpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgICAgIGNvbnN0IHZhbHVlMCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1zdHJva2VDYXAwJykudmFsdWU7XHJcbiAgICAgICAgY29uc3QgdmFsdWUxID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDEnKS52YWx1ZTtcclxuICAgICAgICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtc3Ryb2tlLWNhcCcsIHZhbHVlOiBbdmFsdWUwLCB2YWx1ZTFdIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctc3Ryb2tlQ2FwMScpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgICAgIGNvbnN0IHZhbHVlMCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1zdHJva2VDYXAwJykudmFsdWU7XHJcbiAgICAgICAgY29uc3QgdmFsdWUxID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDEnKS52YWx1ZTtcclxuICAgICAgICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtc3Ryb2tlLWNhcCcsIHZhbHVlOiBbdmFsdWUwLCB2YWx1ZTFdIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctY29sb3InKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgICAgICBjb25zdCB2YWx1ZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1jb2xvcicpLnZhbHVlO1xyXG4gICAgICAgIHBhcmVudC5wb3N0TWVzc2FnZSh7IHBsdWdpbk1lc3NhZ2U6IHsgdHlwZTogJ3NldC1jb2xvcicsIHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctY29sb3JPcGFjaXR5Jykub25jaGFuZ2UgPSAoKSA9PiB7XHJcbiAgICAgICAgY29uc3QgdmFsdWUgPSBwYXJzZUludChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctY29sb3JPcGFjaXR5JykudmFsdWUpIC8gMTAwO1xyXG4gICAgICAgIHBhcmVudC5wb3N0TWVzc2FnZSh7IHBsdWdpbk1lc3NhZ2U6IHsgdHlwZTogJ3NldC1jb2xvci1vcGFjaXR5JywgdmFsdWU6IHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctYmV6aWVyJykub25jaGFuZ2UgPSAoKSA9PiB7XHJcbiAgICAgICAgY29uc3QgdmFsdWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctYmV6aWVyJykuY2hlY2tlZDtcclxuICAgICAgICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtYmV6aWVyJywgdmFsdWU6IHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctZW5hYmxlZCcpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgICAgIGNvbnN0IHZhbHVlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWVuYWJsZWQnKS5jaGVja2VkO1xyXG4gICAgICAgIHBhcmVudC5wb3N0TWVzc2FnZSh7IHBsdWdpbk1lc3NhZ2U6IHsgdHlwZTogJ3NldC1lbmFibGVkJywgdmFsdWU6IHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctZnJhbWVsb2NrZWQnKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgICAgICBjb25zdCB2YWx1ZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1mcmFtZWxvY2tlZCcpLmNoZWNrZWQ7XHJcbiAgICAgICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LWZyYW1lbG9ja2VkJywgdmFsdWU6IHZhbHVlIH0gfSwgJyonKTtcclxuICAgIH07XHJcbn07XHJcbiJdLCJuYW1lcyI6W10sInNvdXJjZVJvb3QiOiIifQ==</script></head>
-<div>
-    Weight
-    <input id="itemflow-strokeWeight" type="number" value="1">
-    DashPattern
-    <input id="itemflow-dashPattern" type="number" value="0">
-    StrokeCap0
-    <select id="itemflow-strokeCap0" type="text">
-        <option selected="">NONE</option>
-        <option>ARROW_EQUILATERAL</option>
-    </select>
-    StrokeCap1
-    <select id="itemflow-strokeCap1" type="text">
-        <option>NONE</option>
-        <option selected="">ARROW_EQUILATERAL</option>
-    </select>
-    Color
-    <input id="itemflow-color" type="color" value="#000000"> 
-    Opacity
-    <input id="itemflow-colorOpacity" type="number" min="1" max="100" value="100">
-    <br>
-    Bezier
-    <input id="itemflow-bezier" type="checkbox" checked>
-    <br>
-    Enabled
-    <input id="itemflow-enabled" type="checkbox" checked>
-    <br>
-    Frame Locked
-    <input id="itemflow-framelocked" type="checkbox" checked>
-</div> 
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidWkuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQSxpQkFBaUIsUUFBUTtBQUN6Qiw4QkFBOEIsaUJBQWlCLG9DQUFvQztBQUNuRjtBQUNBO0FBQ0EsaUJBQWlCLFFBQVE7QUFDekIsOEJBQThCLGlCQUFpQixtQ0FBbUM7QUFDbEY7QUFDQTtBQUNBO0FBQ0E7QUFDQSw4QkFBOEIsaUJBQWlCLG1EQUFtRDtBQUNsRztBQUNBO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIsbURBQW1EO0FBQ2xHO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIsNEJBQTRCO0FBQzNFO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIsMkNBQTJDO0FBQzFGO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIsb0NBQW9DO0FBQ25GO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIscUNBQXFDO0FBQ3BGO0FBQ0E7QUFDQTtBQUNBLDhCQUE4QixpQkFBaUIseUNBQXlDO0FBQ3hGO0FBQ0EiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9JdGVtRmxvdy8uL3NyYy91aS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiBlc2xpbnQtZGlzYWJsZSBuby1yZXN0cmljdGVkLWdsb2JhbHMgKi9cclxud2luZG93Lm9ubG9hZCA9ICgpID0+IHtcclxuICAgIC8vIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1zdHJva2VXZWlnaHQnKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgIC8vICAgY29uc3QgeyB2YWx1ZSB9ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZVdlaWdodCcpIGFzIEhUTUxEYXRhRWxlbWVudDtcclxuICAgIC8vICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LXN0cm9rZS13ZWlnaHQnLCB2YWx1ZSB9IH0sICcqJyk7XHJcbiAgICAvLyB9O1xyXG4gICAgLy8gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWRhc2hQYXR0ZXJuJykub25jaGFuZ2UgPSAoKSA9PiB7XHJcbiAgICAvLyAgIGNvbnN0IHsgdmFsdWUgfSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1kYXNoUGF0dGVybicpIGFzIEhUTUxEYXRhRWxlbWVudDtcclxuICAgIC8vICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LWRhc2gtcGF0dGVybicsIHZhbHVlIH0gfSwgJyonKTtcclxuICAgIC8vIH07XHJcbiAgICAvLyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctc3Ryb2tlQ2FwMCcpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZTAgPSAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDAnKSBhcyBIVE1MRGF0YUVsZW1lbnQpLnZhbHVlO1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZTEgPSAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDEnKSBhcyBIVE1MRGF0YUVsZW1lbnQpLnZhbHVlO1xyXG4gICAgLy8gICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtc3Ryb2tlLWNhcCcsIHZhbHVlOiBbdmFsdWUwLCB2YWx1ZTFdIH0gfSwgJyonKTtcclxuICAgIC8vIH07XHJcbiAgICAvLyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctc3Ryb2tlQ2FwMScpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZTAgPSAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDAnKSBhcyBIVE1MRGF0YUVsZW1lbnQpLnZhbHVlO1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZTEgPSAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LXN0cm9rZUNhcDEnKSBhcyBIVE1MRGF0YUVsZW1lbnQpLnZhbHVlO1xyXG4gICAgLy8gICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtc3Ryb2tlLWNhcCcsIHZhbHVlOiBbdmFsdWUwLCB2YWx1ZTFdIH0gfSwgJyonKTtcclxuICAgIC8vIH07IFxyXG4gICAgLy8gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWNvbG9yJykub25jaGFuZ2UgPSAoKSA9PiB7XHJcbiAgICAvLyAgIGNvbnN0IHZhbHVlID0gKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1jb2xvcicpIGFzIEhUTUxEYXRhRWxlbWVudCkudmFsdWU7XHJcbiAgICAvLyAgIHBhcmVudC5wb3N0TWVzc2FnZSh7IHBsdWdpbk1lc3NhZ2U6IHsgdHlwZTogJ3NldC1jb2xvcicsIHZhbHVlIH0gfSwgJyonKTsgXHJcbiAgICAvLyB9OyBcclxuICAgIC8vIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1jb2xvck9wYWNpdHknKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgIC8vICAgY29uc3QgdmFsdWUgPSBwYXJzZUludCgoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWNvbG9yT3BhY2l0eScpIGFzIEhUTUxEYXRhRWxlbWVudCkudmFsdWUpIC8gMTAwO1xyXG4gICAgLy8gICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtY29sb3Itb3BhY2l0eScsIHZhbHVlOiB2YWx1ZSB9IH0sICcqJyk7XHJcbiAgICAvLyB9O1xyXG4gICAgLy8gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWJlemllcicpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZSA9IChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctYmV6aWVyJykgYXMgSFRNTElucHV0RWxlbWVudCkuY2hlY2tlZDtcclxuICAgIC8vICAgcGFyZW50LnBvc3RNZXNzYWdlKHsgcGx1Z2luTWVzc2FnZTogeyB0eXBlOiAnc2V0LWJlemllcicsIHZhbHVlOiB2YWx1ZSB9IH0sICcqJyk7XHJcbiAgICAvLyB9O1xyXG4gICAgLy8gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWVuYWJsZWQnKS5vbmNoYW5nZSA9ICgpID0+IHtcclxuICAgIC8vICAgY29uc3QgdmFsdWUgPSAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2l0ZW1mbG93LWVuYWJsZWQnKSBhcyBIVE1MSW5wdXRFbGVtZW50KS5jaGVja2VkO1xyXG4gICAgLy8gICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtZW5hYmxlZCcsIHZhbHVlOiB2YWx1ZSB9IH0sICcqJyk7XHJcbiAgICAvLyB9OyBcclxuICAgIC8vIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdpdGVtZmxvdy1mcmFtZWxvY2tlZCcpLm9uY2hhbmdlID0gKCkgPT4ge1xyXG4gICAgLy8gICBjb25zdCB2YWx1ZSA9IChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaXRlbWZsb3ctZnJhbWVsb2NrZWQnKSBhcyBIVE1MSW5wdXRFbGVtZW50KS5jaGVja2VkO1xyXG4gICAgLy8gICBwYXJlbnQucG9zdE1lc3NhZ2UoeyBwbHVnaW5NZXNzYWdlOiB7IHR5cGU6ICdzZXQtZnJhbWVsb2NrZWQnLCB2YWx1ZTogdmFsdWUgfSB9LCAnKicpO1xyXG4gICAgLy8gfTtcclxufTtcclxuIl0sIm5hbWVzIjpbXSwic291cmNlUm9vdCI6IiJ9</script></head><style>
+    html {
+        font-family: 'Roboto', sans-serif;
+        font-style: normal;  
+    }
+    .orange-500 {
+        color: #F97316 !important;
+    }
+    .blue-500 {
+        color: #3B82F6 !important;
+    }
+    .red-500 {
+        color: #EF4444 !important;
+    }
+    .green-500 {
+        color: #10B981 !important;
+    }
+    .gray-900 {
+        color: #111827 !important;
+    } 
+    .gray-100 {
+        color: #F3F4F6 !important;
+    }
+    input[type=number] {
+        padding: 8px;
+        min-width: 40px;
+        max-width: 80px;
+        width:max-content;
+        background-color: #F3F4F6;
+        color: #111827;
+        display: inline-block;
+        border: none;
+        border-radius: 6px;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        -moz-appearance: textfield;
+    }
+    input[type=text] {
+        padding: 8px;
+        min-width: 40px;
+        max-width: 80px;
+        width: fit-content;
+        background-color: #F3F4F6;
+        color: #111827;
+        display: inline-block;
+        border: none;
+        border-radius: 6px;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        -moz-appearance: textfield;
+    }
+    input[type=number]:hover {
+        outline: none;
+    }
+    input[type=color] {
+        max-width: 24px;
+        max-height: 24px;  
+        -webkit-appearance: none;
+        border-style: solid; 
+        border: 0px solid #111827;
+        border-radius: 6px;
+        -moz-appearance: none;
+        padding: 0;
+    } 
+    input[type="color"]:-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+    input[type="color"]:-webkit-color-swatch {
+        border: none;
+    }
+    input[type=color]:hover {
+        outline: none;
+    }
+    input[type=number]:focus {
+        outline: none;
+    }
+    button[type=switch] {
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        background-color: #F3F4F6;
+        color: #111827;
+        border:none;
+        border-radius: 6px;
+    }
+    button[type=switch].mono {
+        padding: 8px;
+        background-color: #F3F4F6;
+        color: #111827;
+        border:none;
+        border-radius: 6px;
+    }
+    button[type=switch].color {
+        padding: 0px;
+        height: 36px;
+        width: 36px;
+        background-color: currentColor;
+         
+    }
+    button[type=switch].color:hover {
+      background-color: currentColor;
+      opacity: .8;
+    }
+    button[type=switch].mono[checked=true] {
+        background-color: #D1D5DB;
+        color: #111827;
+    }
+    button[type=switch]:hover {
+        background-color: #E5E7EB;
+        color: #111827;
+    }
+    button[type=switch]:active {
+        background-color: #D1D5DB;
+        color: #111827;
+    }
+    button[type=switch].mono[checked]:hover {
+        background-color: #E5E7EB;
+        color: #111827;
+    }
+    button[type=switch].mono[checked]:active {
+        background-color: #D1D5DB;
+        color: #111827;
+    }
+    .ma-20 {
+        margin: 20px;
+    }
+    .ml-10 {
+        margin-left: 10px;
+    }
+    .my-20 {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .my-10 {
+        margin-top: 10;
+        margin-bottom: 10px;
+    }
+    .my-5 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    } 
+    .my-15 {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    .pa-10 {
+        padding: 10px;
+    }
+    .pa-20 {
+        padding: 20px;
+    }
+    .main {  
+        background-color: #FFFFFF; 
+    }
+    .flex {
+        display: flex;
+    }
+    .w-100 {
+        width: 100%;
+    }
+    .ml-auto{
+        margin-left: auto;
+    }
+    .mx-auto{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .center {
+        align-items: center;
+        align-content: center;
+    } 
+    .plugin-name {
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    .github-link {
+        font-weight: 400;  
+        font-size: 12px;
+        text-transform: uppercase;
+        border: none;
+        border-color: transparent;
+        background-color: transparent;
+        text-decoration:underline;
+    }
+    .github-link:hover {
+        font-weight: 600;  
+    }
+</style>
+<div class="main pa-10">
+    <div class="flex center w-100"> 
+        <button class="github-link gray-900 ml-auto" id="github-link">GITHUB</button>
+    </div>
+    <div class="flex center my-15">
+        <div class="flex center">
+            <svg class="gray-900" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.8333 15.75H3.16667C2.525 15.75 2 16.3125 2 17C2 17.6875 2.525 18.25 3.16667 18.25H21.8333C22.475 18.25 23 17.6875 23 17C23 16.3125 22.475 15.75 21.8333 15.75ZM21.8333 9.5H3.16667C2.525 9.5 2 10.0625 2 10.75V12C2 12.6875 2.525 13.25 3.16667 13.25H21.8333C22.475 13.25 23 12.6875 23 12V10.75C23 10.0625 22.475 9.5 21.8333 9.5ZM21.8333 2H3.16667C2.525 2 2 2.5625 2 3.25V5.75C2 6.4375 2.525 7 3.16667 7H21.8333C22.475 7 23 6.4375 23 5.75V3.25C23 2.5625 22.475 2 21.8333 2ZM22.4167 20.75H2.58333C2.25667 20.75 2 21.025 2 21.375C2 21.725 2.25667 22 2.58333 22H22.4167C22.7433 22 23 21.725 23 21.375C23 21.025 22.7433 20.75 22.4167 20.75Z" fill="currentColor"></path>
+            </svg>
+        <input class="ml-10" id="stroke-weight" type="number" value="1">
+        </div> 
+        <div class="flex center ml-auto">
+            <svg class="gray-900" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 10H6V14H2V10ZM10 10H14V14H10V10ZM18 10H22V14H18V10Z" fill="currentColor"></path>
+            </svg>
+
+        <input class="ml-10" id="dash-pattern" type="number" min="0" value="0">
+        </div> 
+    </div>
+    <div class="flex center my-15">
+        <div class="flex center">
+        <input id="stroke-color" type="color" value="#111827">
+        <input class="ml-10" id="stroke-color-hex" type="text" spellcheck="false" value="#111827">
+        </div> 
+        <div class="flex center ml-auto">
+        <svg class="gray-900" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5076 21.1587C13.8067 22.0198 11.8661 22.2279 10.0309 21.746C8.19584 21.2641 6.58534 20.1234 5.48607 18.527C4.38679 16.9306 3.87006 14.982 4.02783 13.028C4.18559 11.074 5.00763 9.24132 6.34763 7.85618L12.0026 2L17.6567 7.85618C18.4217 8.64634 19.0235 9.58932 19.4256 10.6278C20.0085 12.1338 20.1516 13.7838 19.8372 15.3733C19.5227 16.9627 18.7645 18.4215 17.6567 19.5685C17.0305 20.2185 16.3042 20.7559 15.5076 21.1587V21.1587ZM7.60479 9.15735L12.0026 4.60234L16.4005 9.15735C17.5322 10.3266 18.1841 11.9035 18.22 13.5587H5.78524C5.82106 11.9034 6.47296 10.3265 7.60479 9.15735V9.15735Z" fill="currentColor"></path>
+        </svg>
+        <input class="ml-10" id="stroke-opacity" type="text" value="100%"> 
+        </div> 
+    </div> 
+    <div class="flex center my-15"> 
+        <button class="color gray-900 mx-auto" id="stroke-color-1" type="switch" color="#111827"></button>
+        <button class="color green-500 mx-auto" id="stroke-color-2" type="switch" color="#10B981"></button>
+        <button class="color red-500 mx-auto" id="stroke-color-3" type="switch" color="#EF4444"></button>
+        <button class="color blue-500 mx-auto" id="stroke-color-4" type="switch" color="#3B82F6"></button>
+        <button class="color orange-500 mx-auto" id="stroke-color-5" type="switch" color="#F97316"></button>
+    </div>
+    <div class="flex center my-15">
+        <button id="strokecap0-switch" type="switch">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12L10 6V18L2 12Z" fill="currentColor"></path>
+            <line x1="10" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4"></line>
+            </svg>
+        </button>
+        <button class="mono mx-auto" id="bezier-switch" type="switch">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M2 4.14286C2 3.57454 2.22576 3.02949 2.62763 2.62763C3.02949 2.22576 3.57454 2 4.14286 2H5.57143C6.13975 2 6.68479 2.22576 7.08666 2.62763C7.48852 3.02949 7.71429 3.57454 7.71429 4.14286H13.62C13.7772 3.87051 14.0199 3.65766 14.3105 3.53731C14.601 3.41697 14.9232 3.39586 15.2269 3.47725C15.5307 3.55864 15.7991 3.73799 15.9905 3.98748C16.182 4.23698 16.2858 4.54267 16.2858 4.85714C16.2858 5.17162 16.182 5.47731 15.9905 5.7268C15.7991 5.97629 15.5307 6.15564 15.2269 6.23704C14.9232 6.31843 14.601 6.29732 14.3105 6.17697C14.0199 6.05663 13.7772 5.84377 13.62 5.57143H10.7486C11.0057 5.82857 11.2343 6.11571 11.44 6.43571C12.3514 7.85286 12.7143 9.79857 12.7143 12C12.7143 14.8471 13.0814 16.4171 13.7329 17.2857C14.2414 17.9657 15.0114 18.3157 16.2857 18.4057C16.2917 17.8414 16.5202 17.3022 16.9214 16.9052C17.3226 16.5083 17.8642 16.2857 18.4286 16.2857H19.8571C20.4255 16.2857 20.9705 16.5115 21.3724 16.9133C21.7742 17.3152 22 17.8603 22 18.4286V19.8571C22 20.4255 21.7742 20.9705 21.3724 21.3724C20.9705 21.7742 20.4255 22 19.8571 22H18.4286C17.8603 22 17.3152 21.7742 16.9133 21.3724C16.5115 20.9705 16.2857 20.4255 16.2857 19.8571H10.38C10.2228 20.1295 9.98005 20.3423 9.68951 20.4627C9.39897 20.583 9.07684 20.6041 8.77308 20.5228C8.46932 20.4414 8.2009 20.262 8.00946 20.0125C7.81802 19.763 7.71425 19.4573 7.71425 19.1429C7.71425 18.8284 7.81802 18.5227 8.00946 18.2732C8.2009 18.0237 8.46932 17.8444 8.77308 17.763C9.07684 17.6816 9.39897 17.7027 9.68951 17.823C9.98005 17.9434 10.2228 18.1562 10.38 18.4286H12.8243C12.7414 18.337 12.6628 18.2416 12.5886 18.1429C11.6329 16.8671 11.2857 14.8671 11.2857 12C11.2857 9.91429 10.9343 8.29 10.2386 7.20714C9.68143 6.34286 8.87857 5.77857 7.71429 5.61857C7.70196 6.17868 7.47077 6.71169 7.07023 7.10342C6.6697 7.49514 6.13168 7.71442 5.57143 7.71429H4.14286C3.57454 7.71429 3.02949 7.48852 2.62763 7.08666C2.22576 6.68479 2 6.13975 2 5.57143V4.14286ZM4.14286 3.42857C3.95342 3.42857 3.77174 3.50383 3.63778 3.63778C3.50383 3.77174 3.42857 3.95342 3.42857 4.14286V5.57143C3.42857 5.76087 3.50383 5.94255 3.63778 6.0765C3.77174 6.21046 3.95342 6.28571 4.14286 6.28571H5.57143C5.76087 6.28571 5.94255 6.21046 6.0765 6.0765C6.21046 5.94255 6.28571 5.76087 6.28571 5.57143V4.14286C6.28571 3.95342 6.21046 3.77174 6.0765 3.63778C5.94255 3.50383 5.76087 3.42857 5.57143 3.42857H4.14286ZM18.4286 17.7143C18.2391 17.7143 18.0574 17.7895 17.9235 17.9235C17.7895 18.0574 17.7143 18.2391 17.7143 18.4286V19.8571C17.7143 20.0466 17.7895 20.2283 17.9235 20.3622C18.0574 20.4962 18.2391 20.5714 18.4286 20.5714H19.8571C20.0466 20.5714 20.2283 20.4962 20.3622 20.3622C20.4962 20.2283 20.5714 20.0466 20.5714 19.8571V18.4286C20.5714 18.2391 20.4962 18.0574 20.3622 17.9235C20.2283 17.7895 20.0466 17.7143 19.8571 17.7143H18.4286Z" fill="currentColor"></path>
+            </svg>
+        </button>
+            <button id="strokecap1-switch" type="switch">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4"></line>
+            </svg>
+
+        </button> 
+    </div> 
+    <div class="flex center my-15">
+        <div class="mx-auto">
+            <button class="mono" id="enable-switch" type="switch">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.7246 2.2745C21.9003 2.45049 21.9991 2.68905 21.9991 2.93778C21.9991 3.18651 21.9003 3.42507 21.7246 3.60106L19.9162 5.41068C20.5786 6.38295 20.881 7.55592 20.7711 8.72727C20.6612 9.89861 20.146 10.9949 19.3143 11.827L18.9388 12.2024L18.9351 12.2062L18.5484 12.5929C18.302 12.839 17.968 12.9772 17.6198 12.9772C17.2716 12.9772 16.9376 12.839 16.6912 12.5929L11.4064 7.30791C11.2844 7.18589 11.1876 7.04103 11.1215 6.88159C11.0555 6.72215 11.0215 6.55127 11.0215 6.3787C11.0215 6.20612 11.0555 6.03524 11.1215 5.8758C11.1876 5.71637 11.2844 5.5715 11.4064 5.44948L12.171 4.68608C13.0036 3.8547 14.1 3.33972 15.2714 3.22984C16.4428 3.11996 17.6158 3.42207 18.5884 4.08412L20.398 2.2745C20.574 2.09873 20.8126 2 21.0613 2C21.31 2 21.5486 2.09873 21.7246 2.2745V2.2745Z" fill="currentColor"></path>
+                <path d="M10.4614 10.0968C10.6371 10.2728 10.7359 10.5113 10.7359 10.76C10.7359 11.0088 10.6371 11.2473 10.4614 11.4233L8.87205 13.0152L10.987 15.1302L12.5763 13.5383C12.6629 13.4486 12.7664 13.3771 12.8809 13.3278C12.9954 13.2786 13.1185 13.2526 13.2431 13.2515C13.3678 13.2503 13.4914 13.274 13.6067 13.3212C13.7221 13.3683 13.8269 13.438 13.9151 13.526C14.0033 13.6141 14.073 13.7189 14.1203 13.8342C14.1675 13.9496 14.1913 14.0731 14.1903 14.1978C14.1893 14.3224 14.1634 14.4456 14.1143 14.5601C14.0652 14.6746 13.9937 14.7782 13.9041 14.8649L12.3073 16.463C12.6 16.8209 12.7493 17.2749 12.7261 17.7367C12.703 18.1985 12.5091 18.6353 12.1821 18.9622L11.8067 19.3376C10.9744 20.1695 9.87781 20.6847 8.70622 20.7943C7.53463 20.904 6.3615 20.6012 5.38928 19.9383L3.57844 21.748C3.40051 21.9138 3.16518 22.004 2.92203 21.9997C2.67887 21.9954 2.44687 21.8969 2.2749 21.725C2.10294 21.553 2.00444 21.321 2.00015 21.0778C1.99586 20.8347 2.08611 20.5993 2.25191 20.4214L4.06024 18.6118C3.39783 17.6395 3.09549 16.4665 3.20538 15.2952C3.31527 14.1238 3.83049 13.0276 4.66219 12.1955L5.03762 11.82C5.36453 11.493 5.80127 11.2991 6.26308 11.276C6.72489 11.2529 7.17882 11.4022 7.53676 11.6949L9.13485 10.0968C9.31084 9.92099 9.54939 9.82227 9.79812 9.82227C10.0468 9.82227 10.2854 9.92099 10.4614 10.0968Z" fill="currentColor"></path>
+                </svg>
+
+            </button>
+            <button class="mono ml-10" id="lock-switch" type="switch">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C9.243 2 7 4.243 7 7V10H6C5.46957 10 4.96086 10.2107 4.58579 10.5858C4.21071 10.9609 4 11.4696 4 12V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V12C20 11.4696 19.7893 10.9609 19.4142 10.5858C19.0391 10.2107 18.5304 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7ZM13 17.723V20H11V17.723C10.6504 17.5228 10.3697 17.2213 10.1948 16.8584C10.02 16.4954 9.95928 16.0879 10.0207 15.6898C10.0821 15.2916 10.2627 14.9214 10.5388 14.6279C10.8148 14.3345 11.1733 14.1316 11.567 14.046C11.8594 13.9813 12.1626 13.9832 12.4542 14.0513C12.7459 14.1194 13.0185 14.2521 13.252 14.4397C13.4855 14.6272 13.6739 14.8647 13.8034 15.1348C13.9328 15.4049 14 15.7005 14 16C13.9994 16.3497 13.9067 16.6932 13.7311 16.9956C13.5556 17.2981 13.3034 17.549 13 17.723V17.723Z" fill="currentColor"></path>
+                </svg>
+
+            </button>
+        </div>
+    </div>
+    
+</div>
+<script>
+    window.onload = () => {
+        const arrowLeftIcon = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12L10 6V18L2 12Z" fill="currentColor"></path>
+            <line x1="10" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4"></line>
+            </svg>
+        `;
+        const lineIcon = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="4"></line>
+            </svg>
+        `;
+        const arrowRightIcon = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 12L14 18L14 6L22 12Z" fill="currentColor"></path>
+            <line x1="14" y1="12" x2="2" y2="12" stroke="currentColor" stroke-width="4"></line>
+            </svg>
+        `;
+        document.getElementById('strokecap0-switch').setAttribute('arrow', 'true');
+        document.getElementById('strokecap0-switch').onclick = () => {
+            const _this = document.getElementById('strokecap0-switch');
+            if (_this.hasAttribute('arrow')){
+                _this.removeAttribute('arrow');
+                _this.innerHTML = lineIcon;
+            } else {
+                _this.setAttribute('arrow', 'true');
+                _this.innerHTML = arrowLeftIcon;
+            }
+
+        };
+        document.getElementById('strokecap1-switch').onclick = () => {
+            const _this = document.getElementById('strokecap1-switch');
+            if (_this.hasAttribute('arrow')){
+                _this.removeAttribute('arrow');
+                _this.innerHTML = lineIcon;
+            } else {
+                _this.setAttribute('arrow', 'true');
+                _this.innerHTML = arrowRightIcon;
+            }
+
+        };
+        document.getElementById('bezier-switch').onclick = () => {
+            const _this = document.getElementById('bezier-switch');
+            if (_this.hasAttribute('checked')){
+                _this.removeAttribute('checked');
+                    
+            } else { 
+                _this.setAttribute('checked', 'true');
+            }
+
+        }; 
+        document.getElementById('enable-switch').onclick = () => {
+            const _this = document.getElementById('enable-switch');
+            if (_this.hasAttribute('checked')){
+                _this.removeAttribute('checked');
+                    
+            } else { 
+                _this.setAttribute('checked', 'true');
+            }
+
+        }; 
+        document.getElementById('lock-switch').onclick = () => { 
+             const _this = document.getElementById('lock-switch');
+            if (_this.hasAttribute('checked')){
+                _this.removeAttribute('checked');
+                    
+            } else { 
+                _this.setAttribute('checked', 'true');
+            }
+        };
+        for (let it = 1; it < 6; it++ ){
+            document.getElementById(`stroke-color-${it}`).onclick = () => {
+                const _this = document.getElementById(`stroke-color-${it}`);
+                const color = _this.getAttribute('color');
+                disableOthers = function () {
+                    for (let it = 1; it < 6; it++) {
+                        const _this = document.getElementById(`stroke-color-${it}`);
+                        const _color = _this.getAttribute('color');
+                        if (color !== _color) {
+                            _this.removeAttribute('checked');
+                        }
+                    }
+                };
+                disableOthers();
+                _this.setAttribute('checked', 'true');
+                document.getElementById('stroke-color-hex').value = color;
+                document.getElementById('stroke-color').value = color;
+            };
+        } 
+        document.getElementById('stroke-opacity').onchange = () => {
+            const _this = document.getElementById('stroke-opacity');
+            console.log(typeof(_this.value));
+            const value = _this.value.replace('%', '');
+            let parsed = 0;
+            parsed = parseFloat(value);
+            if (!isNaN(parsed)) {
+                if (parsed > 100) parsed = 100;
+                if (parsed < 0) parsed = 0;
+                _this.value = parsed.toFixed(0) + '%';
+            } else {
+                parsed = 100;
+                _this.value = '100%';
+            }
+        }
+        document.getElementById('stroke-color').onchange = () => {
+            const value = document.getElementById('stroke-color').value;
+            for (let it = 1; it < 6; it++ ){
+                const _this = document.getElementById(`stroke-color-${it}`);
+                const color = _this.getAttribute('color');
+                if (value === color) {
+                    _this.setAttribute('checked', 'true');
+                } else {
+                    _this.removeAttribute('checked');
+                } 
+            } 
+            document.getElementById('stroke-color-hex').value = value; 
+        }
+        document.getElementById('stroke-color-hex').onchange = () => {
+            const _this = document.getElementById('stroke-color-hex');
+            const getRGBHex = function (value) {
+                const getColor = function (pos, value, len = 2) {
+                    return  parseInt((value).substr(pos, len), 16);
+                }; 
+                if (!value.startsWith('#')) {
+                    value = '#'+value;
+                }
+                console.log(`value: ${value} | length: ${value.length}`);
+                //0 -> #0 -> #000000 
+                if (value.length === 2) {
+                    const A = parseInt(value.substr(1, 1), 16);
+                    if (!isNaN(A)){
+                        let result = '#';
+                        let hexA = A.toString(16).toUpperCase(); 
+                        for (let i = 0; i < 6; i++){
+                            
+                            result +=hexA; 
+                        }
+                        return result;
+                    }
+                }
+
+                //01 -> #01 -> #010101
+                if (value.length === 3) {
+                    const R = getColor(1,value);
+                    if (!isNaN(R)) {
+                        const rHex = R.toString(16).toUpperCase(); 
+                        if (rHex.length === 1) rHex += '0';
+                        return `#${rHex}${rHex}${rHex}`;
+                    }
+                } 
+                //01 -> #FF1 -> #FF1010
+                if (value.length === 4) {
+                    const R = getColor(1, value);
+                    const B = getColor(3, value, 1);
+                    if (!isNaN(R) && !isNaN(B)) {
+                        let rHex = R.toString(16).toUpperCase(); 
+                        let bHex = B.toString(16).toUpperCase();
+                        if (rHex.length === 1) rHex += '0';
+                        if (bHex.length === 1) bHex += '0';
+                       
+                        return `#${rHex}${bHex}${bHex}`;
+                    }
+                } 
+
+                //#1010 -> #1010 -> #101000
+                else if (value.length === 5) {
+                    const R = getColor(1, value);
+                    const G = getColor(3, value);
+                    if (!isNaN(R) && !isNaN(G)){
+                        let rHex = R.toString(16).toUpperCase();
+                        if (rHex.length === 1) rHex += '0';
+                        let gHex = G.toString(16).toUpperCase();
+                        if (gHex.length === 1) gHex += '0';
+                        return `#${rHex}${gHex}00`;
+                    }
+                }
+                //#101010 
+                else if (value.length >= 6) {
+                    const R = getColor(1, value);
+                    const G = getColor(3, value);
+                    const B = getColor(5, value);
+                    if (!isNaN(R) && !isNaN(G) && !isNaN(B)){
+                        let rHex = R.toString(16).toUpperCase();
+                        if (rHex.length === 1) rHex += '0';
+                        let gHex = G.toString(16).toUpperCase();
+                        if (gHex.length === 1) gHex += '0';
+                        let bHex = B.toString(16).toUpperCase();
+                        if (bHex.length === 1) bHex += '0';
+                        return `#${rHex}${gHex}${bHex}`;
+                    }
+                }
+                return "#000000";
+            };
+            _this.value = getRGBHex(_this.value); 
+            const colorPicker = document.getElementById('stroke-color');
+            
+            if (colorPicker.value !== _this.value) {
+                colorPicker.value = _this.value;
+            }
+        }
+        document.getElementById('stroke-weight').onchange = () => {
+            const _this = document.getElementById('stroke-weight');
+            if (_this.value.length === 0){ 
+                _this.value = 1;
+            }
+        }
+        document.getElementById('dash-pattern').onchange = () => {
+            const _this = document.getElementById('dash-pattern');
+            if (_this.value.length === 0){ 
+                _this.value = 0;
+            }
+        }
+    };
+    document.getElementById('github-link').onclick = ()=>{
+        window.open('https://github.com/project');
+    };
+</script>
  

@@ -12,9 +12,8 @@ import * as flow from './flow';
 import { truncate } from 'fs';
 
 figma.showUI(__html__);
-// TODO check for removed 
+figma.ui.resize(300, 330);
 const flowSettings: flow.FlowSettings = new flow.FlowSettings();
-
 
 /* todo update z index */
 flow.Enable();
