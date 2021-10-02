@@ -1,5 +1,5 @@
 {
-  "name": "ItemFlow",
+  "name": "itemflow-figma",
   "version": "1.0.0",
   "description": "Your Figma plugin",
   "main": "code.js",

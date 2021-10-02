@@ -52,6 +52,15 @@ module.exports = (env, argv) => ({
       template: './src/ui.html',
       filename: 'ui.html',
       chunks: ['ui'],
+      minify: {
+        collapseWhitespace: true,
+        keepClosingSlash: true,
+        removeComments: true,
+        removeRedundantAttributes: false, // do not remove type="text"
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true,
+      },
     }),
     new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/.(js)$/]),
   ],

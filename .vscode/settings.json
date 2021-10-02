@@ -4,5 +4,8 @@
         "titleBar.activeBackground": "#344605",
         "titleBar.activeForeground": "#F6FDE5"
     },
-    "todo-tree.tree.showBadges": false
+    "todo-tree.tree.showBadges": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    }, 
 }
