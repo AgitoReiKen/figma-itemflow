@@ -15,6 +15,14 @@ let DATA_NODE_ID = UNDEFINED_ID;
 function GetPluginFrame(): FrameNode {
   let found: FrameNode | any;
   if (DATA_NODE_ID !== UNDEFINED_ID) {
+    const childrenLength = figma.currentPage.children.length;
+    if (childrenLength > 1) {
+      const probablyFound = figma.currentPage.children[childrenLength - 1];
+      if (probablyFound.id === DATA_NODE_ID) {
+        found = probablyFound;
+        return found;
+      }
+    }
     found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
   } else {
     found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
