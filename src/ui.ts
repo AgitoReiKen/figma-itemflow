@@ -245,7 +245,6 @@ window.onload = () => {
     const input = document.getElementById('dash-pattern') as HTMLInputElement;
     const hasAttr = _this.hasAttribute('value');
     if (hasAttr) {
-      console.log('hasAttr');
       const attr = _this.getAttribute('value');
       if (input.value === '0') {
         input.value = attr;
