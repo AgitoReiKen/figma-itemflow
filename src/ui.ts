@@ -229,6 +229,27 @@ window.onload = () => {
     }
     parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value: parseInt(_this.value, 10) } }, '*');
   };
+  document.getElementById('dash-pattern-switch').onclick = () => {
+    const _this = document.getElementById('dash-pattern-switch');
+    const input = document.getElementById('dash-pattern') as HTMLInputElement;
+    const hasAttr = _this.hasAttribute('value');
+    if (hasAttr) {
+      console.log('hasAttr');
+      const attr = _this.getAttribute('value');
+      if (input.value === '0') {
+        input.value = attr;
+      } else if (input.value === attr) {
+        input.value = '0';
+      } else {
+        _this.setAttribute('value', input.value);
+        input.value = '0';
+      }
+    } else if (input.value !== '0') {
+      _this.setAttribute('value', input.value);
+      input.value = '0';
+    }
+    parent.postMessage({ pluginMessage: { type: 'set-dash-pattern', value: parseInt(input.value, 10) } }, '*');
+  };
   document.getElementById('github-link').onclick = () => {
     window.open('https://github.com/AgitoReiKen/figma-itemflow');
   };
