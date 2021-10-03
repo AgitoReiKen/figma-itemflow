@@ -24,22 +24,20 @@ function GetPluginFrame(): FrameNode {
       }
     }
     found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
-  } else {
-    found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
   }
-
-  if (found === null) {
-    const pluginFrame = figma.createFrame();
-
-    pluginFrame.locked = true;
-    pluginFrame.setPluginData(FRAME_DATA, '1');
+  if (found == null || typeof (found) === 'undefined') {
     found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-    DATA_NODE_ID = found.id;
-    // eslint-disable-next-line no-use-before-define
-    UpdatePluginFrame();
-  } else {
-    DATA_NODE_ID = found.id;
+    if (found == null || typeof (found) === 'undefined') {
+      const pluginFrame = figma.createFrame();
+
+      pluginFrame.locked = true;
+      pluginFrame.setPluginData(FRAME_DATA, '1');
+      found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
+      // eslint-disable-next-line no-use-before-define
+      UpdatePluginFrame();
+    }
   }
+  DATA_NODE_ID = found.id;
   return found;
 }
 
