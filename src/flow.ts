@@ -147,7 +147,6 @@ function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
 // TODO Circle
 function SetStrokeCap(node: VectorNode, start: StrokeCap, end: StrokeCap) {
   const copy = JSON.parse(JSON.stringify(node.vectorNetwork));
-
   if ('strokeCap' in copy.vertices[copy.vertices.length - 1]) {
     copy.vertices[copy.vertices.length - 1].strokeCap = start;
     copy.vertices[0].strokeCap = end;
@@ -156,18 +155,18 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end: StrokeCap) {
 }
 
 function UpdateFlowAppearance(flow: VectorNode) : void {
-  const flowSettings = GetFlowSettings(flow);
+  const _flowSettings = GetFlowSettings(flow);
 
-  SetStrokeCap(flow, flowSettings.strokeCap[0], flowSettings.strokeCap[1]);
+  SetStrokeCap(flow, _flowSettings.strokeCap[0], _flowSettings.strokeCap[1]);
   // eslint-disable-next-line no-param-reassign
-  flow.dashPattern = flowSettings.dashPattern;
-  flow.strokeWeight = flowSettings.weight;
+  flow.dashPattern = _flowSettings.dashPattern;
+  flow.strokeWeight = _flowSettings.weight;
   const copy = JSON.parse(JSON.stringify(flow.strokes));
 
-  copy[0].color.r = flowSettings.color.r;
-  copy[0].color.g = flowSettings.color.g;
-  copy[0].color.b = flowSettings.color.b;
-  copy[0].opacity = flowSettings.color.a;
+  copy[0].color.r = _flowSettings.color.r;
+  copy[0].color.g = _flowSettings.color.g;
+  copy[0].color.b = _flowSettings.color.b;
+  copy[0].opacity = _flowSettings.color.a;
   flow.strokes = copy;
 }
 // eslint-disable-next-line camelcase

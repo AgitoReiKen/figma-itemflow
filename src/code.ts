@@ -46,7 +46,8 @@ figma.ui.onmessage = (msg) => {
       break;
     }
     case 'set-dash-pattern': {
-      flow.flowSettings.dashPattern = [parseInt(msg.value, 10)];
+      const dash = parseInt(msg.value, 10);
+      flow.flowSettings.dashPattern = [dash, dash];
       break;
     }
     case 'set-bezier': {
