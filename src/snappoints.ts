@@ -110,24 +110,95 @@ function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<SnapPoint> 
 */
 
   const fromSnapPoints = GetSnapPoints(from);
+  const fromXSnapPoints = [fromSnapPoints[1], fromSnapPoints[3]];
+  const fromYSnapPoints = [fromSnapPoints[0], fromSnapPoints[2]];
   const toSnapPoints = GetSnapPoints(to);
-  const result: Array<SnapPoint> = [
-    null, null,
-  ];
-  let lastDistance: number = 99999999;
-  for (let i = 0; i < 4; i++) {
-    const s1 = fromSnapPoints[i];
-    for (let i2 = 0; i2 < 4; i2++) {
-      const s2 = toSnapPoints[i2];
-      const distance = s1.dist(s2);
-      if (distance < lastDistance) {
-        result[0] = s1;
-        result[1] = s2;
-        lastDistance = distance;
+  const toXSnapPoints = [toSnapPoints[1], toSnapPoints[3]];
+  const toYSnapPoints = [toSnapPoints[0], toSnapPoints[2]];
+
+  const getClosestFrom = function getClosestFrom(_fromSnapPoints, _toSnapPoints)
+    : [number, Array<SnapPoint>] {
+    const _result: Array<SnapPoint> = [
+      null, null,
+    ];
+    let lastDistance: number = 99999999;
+
+    for (let i = 0; i < 2; i++) {
+      for (let i2 = 0; i2 < 2; i2++) {
+        const distance = _fromSnapPoints[i].dist(_toSnapPoints[i2]);
+        if (distance < lastDistance) {
+          _result[0] = _fromSnapPoints[i];
+          _result[1] = _toSnapPoints[i2];
+          lastDistance = distance;
+        }
       }
     }
+    return [lastDistance, _result];
+  };
+  const closestX = getClosestFrom(fromXSnapPoints, toXSnapPoints);
+
+  // Check closest X
+  const wX = Math.abs(closestX[1][0].x - closestX[1][1].x);
+  const hX = Math.abs(closestX[1][0].y - closestX[1][1].y);
+  const distX = closestX[1][0].dist(closestX[1][1]);
+  /*
+    PREVENT THAT
+                      o-----x-----+
+                      |           |
+                    -x           x
+                    / |           |
+                    | +-----x-----+
+                    |
+                    |
+      o-----x-----+ |
+      |           | /
+      x           x -
+      |           |
+      +-----x-----+
+
+      DO INSTEAD THAT
+                      o-----x-----+
+                      |           |
+              /-------x           x
+            /        |           |
+            /         +-----x-----+
+            |
+            |
+      o-----x-----+
+      |           |
+      x           x
+      |           |
+      +-----x-----+
+  */
+
+  const closestY = getClosestFrom(fromYSnapPoints, toYSnapPoints);
+  const wY = Math.abs(closestY[1][0].x - closestY[1][1].x);
+  const hY = Math.abs(closestY[1][0].y - closestY[1][1].y);
+  const distY = closestY[1][0].dist(closestY[1][1]);
+
+  const wXY = Math.abs(closestY[1][0].x - closestX[1][1].x);
+  const hXY = Math.abs(closestY[1][0].y - closestX[1][1].y);
+  const distXY = closestY[1][0].dist(closestX[1][1]);
+
+  // prefer Y over X if X got bad width/height proportions
+  // if good X proportions
+  let closestDistance = 9999999;
+
+  if (distX < closestDistance) closestDistance = distX;
+  if (distY < closestDistance) closestDistance = distY;
+  if (distXY < closestDistance) closestDistance = distXY;
+  if (wX * 1.5 > hX) {
+    const _from = closestX[1][0];
+    const _to = closestX[1][1];
+    if ((_from._type === 'right') ? _from.x < _to.x : _from.x > _to.x) {
+      return [closestX[1][0], closestX[1][1]];
+    }
   }
-  return result;
+  if (hY * 2 > wY) {
+    return [closestY[1][0], closestY[1][1]];
+  }
+
+  return [closestX[1][0], closestY[1][1]];
 }
 export default { GetSnapPoint, GetSnapPointById, GetClosestSnapPoints };
 // #endregion
