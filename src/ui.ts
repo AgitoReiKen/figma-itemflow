@@ -75,6 +75,17 @@ window.onload = () => {
     }
     parent.postMessage({ pluginMessage: { type: 'set-enabled', value: !hasAttr } }, '*');
   };
+  document.getElementById('update-switch').setAttribute('checked', 'true');
+  document.getElementById('update-switch').onclick = () => {
+    const _this = document.getElementById('update-switch');
+    const hasAttr = _this.hasAttribute('checked');
+    if (hasAttr) {
+      _this.removeAttribute('checked');
+    } else {
+      _this.setAttribute('checked', 'true');
+    }
+    parent.postMessage({ pluginMessage: { type: 'set-update', value: !hasAttr } }, '*');
+  };
   document.getElementById('lock-switch').setAttribute('checked', 'true');
   document.getElementById('lock-switch').onclick = () => {
     const _this = document.getElementById('lock-switch');

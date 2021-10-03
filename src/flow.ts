@@ -1,4 +1,4 @@
-import { SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
+import { SetOnSelectionChanged, SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
 import snappoints from './snappoints';
 import Vector2D from './vector';
 
@@ -82,6 +82,7 @@ class FlowSettings {
 
   bezier: boolean = true;
 }
+const flowSettings: FlowSettings = new FlowSettings();
 class FlowCoordsData {
   nodesAbsoluteTransform: Array<Vector2D> = [];
 }
@@ -293,12 +294,13 @@ let updateFlowIntervalId = -1;
 let updateFrameIntervalId = -1;
 let updateIntervalsIntervalId = -1;
 let enabled = false;
+let update = false;
 function UpdateFlowInterval(intervalMS: number = 50, force: boolean = false) {
   if (intervalMS < 50) intervalMS = 50;
-  if (force || enabled) {
+  if (force || update) {
     if (updateFlowIntervalId !== -1) clearInterval(updateFlowIntervalId);
     updateFlowIntervalId = setInterval(() => {
-      if (enabled) {
+      if (update) {
         // const now1 = Date.now();
         const _nodes = GetAllFlows();
         _nodes.forEach((x) => {
@@ -313,35 +315,46 @@ function UpdateFlowInterval(intervalMS: number = 50, force: boolean = false) {
 function UpdateIntervals() {
   UpdateFlowInterval(GetAllFlows().length, true); // now
   updateIntervalsIntervalId = setInterval(() => {
-    if (enabled) {
+    if (update) {
       UpdateFlowInterval(GetAllFlows().length); // each 10 seconds
     }
   }, 10000);
-
-  updateFrameIntervalId = setInterval(() => {
-    if (enabled) {
-      UpdatePluginFrame();
-    }
-  }, 1000);
 }
-function Enable(): void {
+
+function EnableFlowEvents(): void {
   enabled = true;
-  UpdateIntervals();
+  SetOnSelectionChanged((_selection: Array<SceneNode>) => {
+    if (_selection.length === 2) {
+      CreateFlow(_selection[0], _selection[1], flowSettings);
+    }
+  });
   SetOnSelectionItemAdded((item: SceneNode) => {
     // Prevent main frame selecting
     if (item.id === GetPluginFrame().id) {
       figma.currentPage.selection = [];
     }
   });
-
   SetOnSelectionItemRemoved((item: SceneNode) => {
     if (item !== null && item.removed) {
       RemoveFlows(item);
     }
   });
 }
-function Disable(): void {
+function DisableFlowEvents(): void {
   enabled = false;
+  SetOnSelectionChanged((_selection: Array<SceneNode>) => {
+  });
+  SetOnSelectionItemAdded((item: SceneNode) => {
+  });
+  SetOnSelectionItemRemoved((item: SceneNode) => {
+  });
+}
+function EnableFlowUpdate(): void {
+  update = true;
+  UpdateIntervals();
+}
+function DisableFlowUpdate(): void {
+  update = false;
   if (updateIntervalsIntervalId !== -1) {
     clearInterval(updateIntervalsIntervalId);
     updateIntervalsIntervalId = -1;
@@ -350,11 +363,29 @@ function Disable(): void {
     clearInterval(updateFlowIntervalId);
     updateFlowIntervalId = -1;
   }
+}
+function Enable(): void {
+  updateFrameIntervalId = setInterval(() => {
+    if (enabled) {
+      UpdatePluginFrame();
+    }
+  }, 1000);
+  EnableFlowEvents();
+  EnableFlowUpdate();
+}
+function Disable(): void {
   if (updateFrameIntervalId !== -1) {
     clearInterval(updateFrameIntervalId);
     updateFrameIntervalId = -1;
   }
+  DisableFlowEvents();
+  DisableFlowUpdate();
 }
 export {
-  FlowSettings, GetPluginFrame, Enable, Disable, CreateFlow,
+  FlowSettings, flowSettings,
+  GetPluginFrame,
+  Enable, Disable,
+  CreateFlow,
+  EnableFlowEvents, DisableFlowEvents,
+  EnableFlowUpdate, DisableFlowUpdate,
 };
