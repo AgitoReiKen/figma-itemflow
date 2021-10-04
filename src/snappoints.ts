@@ -124,13 +124,14 @@ function GetClosestSnapPoints(from: SceneNode, to: SceneNode): Array<SnapPoint> 
     let lastDistance: number = 99999999;
 
     for (let i = 0; i < 2; i++) {
-      for (let i2 = 0; i2 < 2; i2++) {
-        const distance = _fromSnapPoints[i].dist(_toSnapPoints[i2]);
-        if (distance < lastDistance) {
-          _result[0] = _fromSnapPoints[i];
-          _result[1] = _toSnapPoints[i2];
-          lastDistance = distance;
-        }
+      // left to right
+      // right to left
+      const compareTo = (i + 1) % 2;
+      const distance = _fromSnapPoints[i].dist(_toSnapPoints[compareTo]);
+      if (distance < lastDistance) {
+        _result[0] = _fromSnapPoints[i];
+        _result[1] = _toSnapPoints[compareTo];
+        lastDistance = distance;
       }
     }
     return [lastDistance, _result];
