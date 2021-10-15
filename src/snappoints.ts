@@ -67,24 +67,25 @@ function GetSnapPoints(x: SceneNode): Array<SnapPoint> {
   const absoluteY = x.absoluteTransform[1][2];
   const cos = Math.cos(radian);
   const sin = Math.sin(radian);
+  const { height, width } = x;
   result.push(new SnapPoint(
-    absoluteX + (x.width * 0.5 * cos),
-    absoluteY - (x.width * 0.5 * sin),
+    absoluteX + (width * 0.5 * cos),
+    absoluteY - (width * 0.5 * sin),
     'top',
   ));
   result.push(new SnapPoint(
-    absoluteX + (x.width * cos) + (x.height * 0.5 * sin),
-    absoluteY + (x.height * 0.5 * cos) - (x.width * sin),
+    absoluteX + (width * cos) + (height * 0.5 * sin),
+    absoluteY + (height * 0.5 * cos) - (width * sin),
     'right',
   ));
   result.push(new SnapPoint(
-    absoluteX + (x.width * 0.5 * cos) + (x.height * sin),
-    absoluteY + (x.height * cos) - (x.width * 0.5 * sin),
+    absoluteX + (width * 0.5 * cos) + (height * sin),
+    absoluteY + (height * cos) - (width * 0.5 * sin),
     'bottom',
   ));
   result.push(new SnapPoint(
-    absoluteX + (x.height * 0.5 * sin),
-    absoluteY + (x.height * 0.5 * cos),
+    absoluteX + (height * 0.5 * sin),
+    absoluteY + (height * 0.5 * cos),
     'left',
   ));
   return result;

@@ -1,3 +1,5 @@
+import { SSL_OP_EPHEMERAL_RSA } from 'constants';
+import { resolve } from 'path/posix';
 import { SetOnSelectionChanged, SetOnSelectionItemAdded, SetOnSelectionItemRemoved } from './selection';
 import snappoints from './snappoints';
 import Vector2D from './vector';
@@ -79,6 +81,22 @@ class FlowSettings {
   color: Color = new Color(0, 0, 0, 1);
 
   bezier: boolean = true;
+}
+class FlowWorker {
+  worker: Worker;
+
+  constructor() {
+    const blob = new Blob([document.getElementById('itemflow-worker').textContent]);
+    this.worker = new Worker(window.URL.createObjectURL(blob));
+    this.worker.addEventListener('message', this.onMessageFromWorker.bind(this), null);
+  }
+
+  onMessageFromWorker(event) {
+  }
+
+  terminate() {
+    this.worker.terminate();
+  }
 }
 const flowSettings: FlowSettings = new FlowSettings();
 class FlowCoordsData {
@@ -170,15 +188,17 @@ function UpdateFlowAppearance(flow: VectorNode) : void {
 // eslint-disable-next-line camelcase
 function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
   force: boolean): void {
+  const fromAbsoluteTransformObject = from.absoluteTransform;
+  const toAbsoluteTransformObject = to.absoluteTransform;
   const fromAbsoluteTransform = new Vector2D(
-    from.absoluteTransform[0][2],
-    from.absoluteTransform[1][2],
-  );
-  const toAbsoluteTransform = new Vector2D(
-    to.absoluteTransform[0][2],
-    to.absoluteTransform[1][2],
+    fromAbsoluteTransformObject[0][2],
+    fromAbsoluteTransformObject[1][2],
   );
 
+  const toAbsoluteTransform = new Vector2D(
+    toAbsoluteTransformObject[0][2],
+    toAbsoluteTransformObject[1][2],
+  );
   const coordsData = GetFlowCoordsData(flow);
   let transformChanged = true;
   if (coordsData !== null) {
@@ -254,6 +274,7 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
     flow.name = `${from.name} -> ${to.name}`;
   }
 }
+
 function UpdateFlow(flow: VectorNode, force: boolean = false): void {
   const data = GetFlowData(flow);
   const from = figma.getNodeById(data[0]) as SceneNode;
@@ -262,13 +283,15 @@ function UpdateFlow(flow: VectorNode, force: boolean = false): void {
   if (from === null || to === null) {
     flow.remove();
   } else {
-    if (from.removed) {
+    const fromRemoved = from.removed;
+    const toRemoved = to.removed;
+    if (fromRemoved) {
       RemoveFlows(from);
     }
-    if (to.removed) {
+    if (toRemoved) {
       RemoveFlows(to);
     }
-    if (!to.removed && !from.removed) {
+    if (!toRemoved && !fromRemoved) {
       UpdateFlow_Internal(flow, from, to, force);
     }
   }
@@ -292,28 +315,58 @@ let updateFrameIntervalId = -1;
 let updateIntervalsIntervalId = -1;
 let enabled = false;
 let update = false;
+const portionLength = 100;
+const portionDelay = 1000 / 30; // 30 fps
 function UpdateFlowInterval(intervalMS: number = 50, force: boolean = false) {
-  if (intervalMS < 50) intervalMS = 50;
+  if (intervalMS < (portionDelay * 2)) intervalMS = portionDelay * 2;
   if (force || update) {
     if (updateFlowIntervalId !== -1) clearInterval(updateFlowIntervalId);
     updateFlowIntervalId = setInterval(() => {
       if (update) {
-        // const now1 = Date.now();
+        // split task to portions, so user will not notice lag spikes
         const _nodes = GetAllFlows();
-        _nodes.forEach((x) => {
-          UpdateFlow(x);
-        });
-        // const now2 = Date.now();
-        // console.log(`${(now2 - now1).toString()}ms. for ${_nodes.length} nodes`);
+
+        if (_nodes.length > 0) {
+          for (let portion = 0; portion <= _nodes.length / portionLength; portion++) {
+            setTimeout(() => {
+              // const now1 = Date.now();
+              let start = portion * portionLength;
+              let end = start + portionLength;
+
+              if (start >= _nodes.length) {
+                start = _nodes.length - 1;
+              }
+              if (end > _nodes.length) {
+                end = _nodes.length;
+              }
+              const nodes = _nodes.slice(
+                start,
+                end,
+              );
+              nodes.forEach((x) => {
+                UpdateFlow(x);
+              });
+
+              // const now2 = Date.now();
+              // console.log(`${(now2 - now1).toString()}ms. for ${nodes.length} nodes. Cost per flow: ${((now2 - now1) / nodes.length).toFixed(2)}`);
+            }, portion * portionDelay);
+          }
+        }
       }
     }, intervalMS);
   }
 }
 function UpdateIntervals() {
-  UpdateFlowInterval(GetAllFlows().length, true); // now
+  const getInterval = () => {
+    const { length } = GetAllFlows();
+    const portions = length / portionLength;
+    return length + (portions * portionDelay);
+  };
+
+  UpdateFlowInterval(getInterval(), true); // now
   updateIntervalsIntervalId = setInterval(() => {
     if (update) {
-      UpdateFlowInterval(GetAllFlows().length); // each 10 seconds
+      UpdateFlowInterval(getInterval()); // each 10 seconds
     }
   }, 10000);
 }
@@ -362,6 +415,7 @@ function DisableFlowUpdate(): void {
   }
 }
 function Enable(): void {
+  // figma.ui.postMessage('Hi from flow');
   updateFrameIntervalId = setInterval(() => {
     if (enabled) {
       UpdatePluginFrame();
@@ -371,6 +425,9 @@ function Enable(): void {
   EnableFlowUpdate();
 }
 function Disable(): void {
+  if (global.flowWorker !== undefined) {
+    (global.flowWorker as FlowWorker).terminate();
+  }
   if (updateFrameIntervalId !== -1) {
     clearInterval(updateFrameIntervalId);
     updateFrameIntervalId = -1;
@@ -380,6 +437,7 @@ function Disable(): void {
 }
 export {
   FlowSettings, flowSettings,
+  FlowWorker,
   GetPluginFrame,
   Enable, Disable,
   CreateFlow,

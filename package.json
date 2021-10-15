@@ -12,7 +12,8 @@
   "dependencies": {
     "@figma/plugin-typings": "^1.35.0",
     "@types/node": "^16.10.1",
-    "react-dev-utils": "^11.0.4"
+    "react-dev-utils": "^11.0.4",
+    "uglifyjs-webpack-plugin": "^2.2.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.31.2",

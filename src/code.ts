@@ -5,18 +5,18 @@ import * as flow from './flow';
 
 figma.showUI(__html__);
 figma.ui.resize(300, 330);
-
-/* todo update z index */
-flow.Enable();
-
-flow.GetPluginFrame().locked = true;
-
-figma.on('close', () => {
-  flow.Disable();
-  figma.closePlugin();
-});
 figma.ui.onmessage = (msg) => {
   switch (msg.type) {
+    case 'init': {
+      flow.Enable();
+      flow.GetPluginFrame().locked = true;
+      figma.on('close', () => {
+        flow.Disable();
+        figma.closePlugin();
+      });
+
+      break;
+    }
     case 'set-stroke-weight': {
       flow.flowSettings.weight = parseInt(msg.value, 10);
       break;

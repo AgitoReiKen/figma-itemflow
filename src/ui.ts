@@ -1,5 +1,13 @@
 /* eslint-disable brace-style */
 /* eslint-disable no-restricted-globals */
+
+import { flowSettings, FlowWorker } from './flow';
+
+window.onmessage = (event) => {
+  const { pluginMessage } = event;
+  console.log(event.data);
+};
+let flowWorker: FlowWorker = null;
 window.onload = () => {
   const arrowLeftIcon = `
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -263,4 +271,8 @@ window.onload = () => {
   document.getElementById('github-link').onclick = () => {
     window.open('https://github.com/AgitoReiKen/figma-itemflow');
   };
+  flowWorker = new FlowWorker();
+  // (flowWorker as FlowWorker).worker.postMessage('Are you okay?');
+
+  parent.postMessage({ pluginMessage: { type: 'init' } }, '*');
 };
