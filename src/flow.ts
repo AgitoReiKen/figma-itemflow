@@ -4,7 +4,7 @@ import { SetOnSelectionChanged, SetOnSelectionItemAdded, SetOnSelectionItemRemov
 import snappoints from './snappoints';
 import Vector2D from './vector';
 
-const PLUGIN_NAME = 'ItemFrame';
+const PLUGIN_NAME = 'ItemFlow';
 const FLOW_DATA = 'IF';
 const FLOW_COORDS_DATA = 'IFC';
 const FLOW_SETTINGS_DATA = 'IFS';
