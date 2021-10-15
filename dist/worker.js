@@ -1,1 +1,0 @@
-onmessage=function(s){console.log(s),this.postMessage("message from worker")};

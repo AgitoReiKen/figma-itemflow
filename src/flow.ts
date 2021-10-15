@@ -82,22 +82,7 @@ class FlowSettings {
 
   bezier: boolean = true;
 }
-class FlowWorker {
-  worker: Worker;
 
-  constructor() {
-    const blob = new Blob([document.getElementById('itemflow-worker').textContent]);
-    this.worker = new Worker(window.URL.createObjectURL(blob));
-    this.worker.addEventListener('message', this.onMessageFromWorker.bind(this), null);
-  }
-
-  onMessageFromWorker(event) {
-  }
-
-  terminate() {
-    this.worker.terminate();
-  }
-}
 const flowSettings: FlowSettings = new FlowSettings();
 class FlowCoordsData {
   nodesAbsoluteTransform: Array<Vector2D> = [];
@@ -425,9 +410,6 @@ function Enable(): void {
   EnableFlowUpdate();
 }
 function Disable(): void {
-  if (global.flowWorker !== undefined) {
-    (global.flowWorker as FlowWorker).terminate();
-  }
   if (updateFrameIntervalId !== -1) {
     clearInterval(updateFrameIntervalId);
     updateFrameIntervalId = -1;
@@ -437,7 +419,6 @@ function Disable(): void {
 }
 export {
   FlowSettings, flowSettings,
-  FlowWorker,
   GetPluginFrame,
   Enable, Disable,
   CreateFlow,
