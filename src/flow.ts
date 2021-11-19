@@ -329,7 +329,9 @@ function UpdateFlowInterval(intervalMS: number = 50, force: boolean = false) {
                 end,
               );
               nodes.forEach((x) => {
-                UpdateFlow(x);
+                if (x !== null && !x.removed) {
+                  UpdateFlow(x);
+                }
               });
 
               // const now2 = Date.now();
