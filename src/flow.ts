@@ -12,35 +12,38 @@ const FRAME_DATA = PLUGIN_NAME;
 const UNDEFINED_ID = 'undefined';
 const FRAME_OFFSET = new Vector2D(-99999, -99999);
 let DATA_NODE_ID = UNDEFINED_ID;
-
+let PluginFrameCached: FrameNode = null;
 // #region Frame
 function GetPluginFrame(): FrameNode {
-  let found: FrameNode | any;
-  if (DATA_NODE_ID !== UNDEFINED_ID) {
-    const childrenLength = figma.currentPage.children.length;
-    if (childrenLength > 1) {
-      const probablyFound = figma.currentPage.children[childrenLength - 1];
-      if (probablyFound.id === DATA_NODE_ID) {
-        found = probablyFound;
-        return found;
+  if (PluginFrameCached === null || PluginFrameCached.removed) {
+    let found: FrameNode | any;
+    if (DATA_NODE_ID !== UNDEFINED_ID) {
+      const childrenLength = figma.currentPage.children.length;
+      if (childrenLength > 1) {
+        const probablyFound = figma.currentPage.children[childrenLength - 1];
+        if (probablyFound.id === DATA_NODE_ID) {
+          found = probablyFound;
+          return found;
+        }
+      }
+      found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
+    }
+    if (found == null || typeof (found) === 'undefined') {
+      found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
+      if (found == null || typeof (found) === 'undefined') {
+        const pluginFrame = figma.createFrame();
+
+        pluginFrame.locked = true;
+        pluginFrame.setPluginData(FRAME_DATA, '1');
+        found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
+        // eslint-disable-next-line no-use-before-define
+        UpdatePluginFrame();
       }
     }
-    found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
+    DATA_NODE_ID = found.id;
+    PluginFrameCached = found;
   }
-  if (found == null || typeof (found) === 'undefined') {
-    found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-    if (found == null || typeof (found) === 'undefined') {
-      const pluginFrame = figma.createFrame();
-
-      pluginFrame.locked = true;
-      pluginFrame.setPluginData(FRAME_DATA, '1');
-      found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-      // eslint-disable-next-line no-use-before-define
-      UpdatePluginFrame();
-    }
-  }
-  DATA_NODE_ID = found.id;
-  return found;
+  return PluginFrameCached;
 }
 
 function UpdatePluginFrame(): void {
@@ -366,10 +369,7 @@ function EnableFlowEvents(): void {
     }
   });
   SetOnSelectionItemAdded((item: SceneNode) => {
-    // Prevent main frame selecting
-    if (item.id === GetPluginFrame().id) {
-      figma.currentPage.selection = [];
-    }
+
   });
   SetOnSelectionItemRemoved((item: SceneNode) => {
     if (item !== null && item.removed) {
