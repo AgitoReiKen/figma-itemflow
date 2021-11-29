@@ -13,9 +13,12 @@ const UNDEFINED_ID = 'undefined';
 const FRAME_OFFSET = new Vector2D(-99999, -99999);
 let DATA_NODE_ID = UNDEFINED_ID;
 let PluginFrameCached: FrameNode = null;
+let lastPageId = null;
 // #region Frame
 function GetPluginFrame(): FrameNode {
-  if (PluginFrameCached === null || PluginFrameCached.removed) {
+  const pageChanged = figma.currentPage.id || lastPageId;
+  if (PluginFrameCached === null || PluginFrameCached.removed || pageChanged) {
+    lastPageId = figma.currentPage.id;
     let found: FrameNode | any;
     if (DATA_NODE_ID !== UNDEFINED_ID) {
       const childrenLength = figma.currentPage.children.length;
@@ -28,11 +31,10 @@ function GetPluginFrame(): FrameNode {
       }
       found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
     }
-    if (found == null || typeof (found) === 'undefined') {
+    if (found == null || typeof (found) === 'undefined' || pageChanged) {
       found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
       if (found == null || typeof (found) === 'undefined') {
         const pluginFrame = figma.createFrame();
-
         pluginFrame.locked = true;
         pluginFrame.setPluginData(FRAME_DATA, '1');
         found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
