@@ -1,4 +1,4 @@
-import { GetPluginFrame } from './flow';
+import { GetPluginNode } from './flow';
 
 import * as selection from './selection';
 import * as flow from './flow';
@@ -9,7 +9,7 @@ figma.ui.onmessage = (msg) => {
   switch (msg.type) {
     case 'init': {
       flow.Enable();
-      flow.GetPluginFrame().locked = true;
+      flow.GetPluginNode().locked = true;
       figma.on('close', () => {
         flow.Disable();
         figma.closePlugin();
@@ -71,7 +71,7 @@ figma.ui.onmessage = (msg) => {
       break;
     }
     case 'set-framelocked': {
-      GetPluginFrame().locked = msg.value;
+      GetPluginNode().locked = msg.value;
       break;
     }
   }

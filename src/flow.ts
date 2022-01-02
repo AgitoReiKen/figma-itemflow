@@ -9,53 +9,63 @@ const FLOW_DATA = 'IF';
 const FLOW_COORDS_DATA = 'IFC';
 const FLOW_SETTINGS_DATA = 'IFS';
 const FRAME_DATA = PLUGIN_NAME;
-const UNDEFINED_ID = 'undefined';
-const FRAME_OFFSET = new Vector2D(-99999, -99999);
-let DATA_NODE_ID = UNDEFINED_ID;
-let PluginFrameCached: FrameNode = null;
+let PluginFrameCached: GroupNode = null;
 let lastPageId = null;
 // #region Frame
-function GetPluginFrame(): FrameNode {
+function ConvertPluginFrameIntoGroup(pluginFrame: FrameNode): GroupNode {
+  const dummyFrame = figma.createFrame();
+  dummyFrame.visible = false;
+  dummyFrame.name = 'group-holder';
+  dummyFrame.locked = true;
+  pluginFrame.appendChild(dummyFrame);
+  const created = figma.group(pluginFrame.children, figma.currentPage);
+  pluginFrame.setPluginData(FRAME_DATA, '0');
+  pluginFrame.remove();
+  created.name = PLUGIN_NAME;
+  created.setPluginData(FRAME_DATA, '1');
+  return created;
+}
+// eslint-disable-next-line camelcase
+function CreatePluginNode_Internal(): FrameNode {
+  const pluginFrame = figma.createFrame();
+  pluginFrame.locked = true;
+  ConvertPluginFrameIntoGroup(pluginFrame);
+  return figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
+}
+function GetPluginNode(): GroupNode {
   const pageChanged = figma.currentPage.id || lastPageId;
-  if (PluginFrameCached === null || PluginFrameCached.removed || pageChanged) {
+  const isValidNode = function (node: SceneNode) : boolean {
+    return node != null && typeof (node) !== 'undefined' && !node.removed;
+  };
+  const getOrCreateNode = function (): GroupNode {
+    let found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1');
+
+    if (!isValidNode(found)) {
+      found = CreatePluginNode_Internal();
+      // eslint-disable-next-line no-use-before-define
+      UpdatePluginNode();
+    } else if (found.type === 'FRAME') { found = ConvertPluginFrameIntoGroup(found); }
+
+    return found as GroupNode;
+  };
+  if (pageChanged) {
+    PluginFrameCached = getOrCreateNode();
+  }
+  if (PluginFrameCached === null || PluginFrameCached.removed) {
     lastPageId = figma.currentPage.id;
-    let found: FrameNode | any;
-    if (DATA_NODE_ID !== UNDEFINED_ID) {
-      const childrenLength = figma.currentPage.children.length;
-      if (childrenLength > 1) {
-        const probablyFound = figma.currentPage.children[childrenLength - 1];
-        if (probablyFound.id === DATA_NODE_ID) {
-          found = probablyFound;
-          return found;
-        }
-      }
-      found = figma.currentPage.findOne((x) => x.id === DATA_NODE_ID);
-    }
-    if (found == null || typeof (found) === 'undefined' || pageChanged) {
-      found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-      if (found == null || typeof (found) === 'undefined') {
-        const pluginFrame = figma.createFrame();
-        pluginFrame.locked = true;
-        pluginFrame.setPluginData(FRAME_DATA, '1');
-        found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
-        // eslint-disable-next-line no-use-before-define
-        UpdatePluginFrame();
-      }
-    }
-    DATA_NODE_ID = found.id;
-    PluginFrameCached = found;
+    PluginFrameCached = getOrCreateNode();
   }
   return PluginFrameCached;
 }
 
-function UpdatePluginFrame(): void {
-  const pluginFrame = GetPluginFrame();
-  figma.currentPage.insertChild(figma.currentPage.children.length, pluginFrame);
-  pluginFrame.resize(1, 1);
-  pluginFrame.x = FRAME_OFFSET.x;
-  pluginFrame.y = FRAME_OFFSET.y;
-  pluginFrame.name = PLUGIN_NAME;
-  pluginFrame.clipsContent = false;
+function UpdatePluginNode(): void {
+  const pluginNode = GetPluginNode();
+
+  if ((pluginNode as SceneNode).type === 'FRAME') {
+    ConvertPluginFrameIntoGroup((pluginNode as unknown) as FrameNode);
+  }
+  figma.currentPage.insertChild(figma.currentPage.children.length, pluginNode);
+  pluginNode.name = PLUGIN_NAME;
 }
 
 class Color {
@@ -126,7 +136,7 @@ function GetFlowData(node: SceneNode) : Array<string> {
   return [];
 }
 function RemoveFlows(of: SceneNode): void {
-  const flows = GetPluginFrame().findChildren((x) => {
+  const flows = GetPluginNode().findChildren((x) => {
     const data = GetFlowData(x);
     if (data.length === 2) {
       const res = typeof (data.find((y) => y === of.id)) !== 'undefined';
@@ -138,7 +148,7 @@ function RemoveFlows(of: SceneNode): void {
   flows.forEach((x) => x.remove());
 }
 function GetAllFlows(): Array<VectorNode> {
-  return GetPluginFrame().findChildren((x) => GetFlowData(x).length === 2) as Array<VectorNode>;
+  return GetPluginNode().findChildren((x) => GetFlowData(x).length === 2) as Array<VectorNode>;
 }
 function GetFlow(from: SceneNode, to: SceneNode): VectorNode | null {
   return figma.currentPage.findOne((x) => {
@@ -203,8 +213,8 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
     const x = sp[0].x - sp[1].x;
     const y = sp[0].y - sp[1].y;
 
-    const flowX = sp[0].x - x - FRAME_OFFSET.x;
-    const flowY = sp[0].y - y - FRAME_OFFSET.y;
+    const flowX = sp[0].x - x;
+    const flowY = sp[0].y - y;
     flow.x = flowX;
     flow.y = flowY;
 
@@ -292,7 +302,7 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
   svg = GetFlow(from, to);
   if (svg === null) {
     svg = figma.createVector();
-    GetPluginFrame().appendChild(svg);
+    GetPluginNode().appendChild(svg);
   }
   // Order is matter :)
   SetFlowSettings(svg, settings);
@@ -371,7 +381,6 @@ function EnableFlowEvents(): void {
     }
   });
   SetOnSelectionItemAdded((item: SceneNode) => {
-
   });
   SetOnSelectionItemRemoved((item: SceneNode) => {
     if (item !== null && item.removed) {
@@ -407,7 +416,7 @@ function Enable(): void {
   // figma.ui.postMessage('Hi from flow');
   updateFrameIntervalId = setInterval(() => {
     if (enabled) {
-      UpdatePluginFrame();
+      UpdatePluginNode();
     }
   }, 1000);
   EnableFlowEvents();
@@ -423,7 +432,7 @@ function Disable(): void {
 }
 export {
   FlowSettings, flowSettings,
-  GetPluginFrame,
+  GetPluginNode,
   Enable, Disable,
   CreateFlow,
   EnableFlowEvents, DisableFlowEvents,

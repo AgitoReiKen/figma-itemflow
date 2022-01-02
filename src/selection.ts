@@ -25,8 +25,6 @@ function UpdateSelection() {
   }
   // added
   else if (lastSelection.length < selection.length) {
-    const date1 = Date.now();
-    const date2 = Date.now();
     selection.forEach((x, i) => {
       const found = lastSelection.find((y, i2) => x.id === y.id) !== undefined;
       if (!found) {
