@@ -33,13 +33,20 @@ function CreatePluginNode_Internal(): FrameNode {
   return figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1') as FrameNode;
 }
 function GetPluginNode(): GroupNode {
-  const pageChanged = figma.currentPage.id || lastPageId;
+  const pageChanged = figma.currentPage.id !== lastPageId;
   const isValidNode = function (node: SceneNode) : boolean {
     return node != null && typeof (node) !== 'undefined' && !node.removed;
   };
   const getOrCreateNode = function (): GroupNode {
-    let found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1');
-
+    let found = null;
+    // const childrenLength = figma.currentPage.children.length;
+    // if (childrenLength > 0) {
+    //   const firstItem = figma.currentPage.children[childrenLength - 1];
+    //   if (isValidNode(firstItem) && firstItem.getPluginData(FRAME_DATA) === '1') {
+    //     found = firstItem;
+    //   }
+    // }
+    found = figma.currentPage.findOne((x) => x.getPluginData(FRAME_DATA) === '1');
     if (!isValidNode(found)) {
       found = CreatePluginNode_Internal();
       // eslint-disable-next-line no-use-before-define
@@ -48,10 +55,7 @@ function GetPluginNode(): GroupNode {
 
     return found as GroupNode;
   };
-  if (pageChanged) {
-    PluginFrameCached = getOrCreateNode();
-  }
-  if (PluginFrameCached === null || PluginFrameCached.removed) {
+  if (pageChanged || (!isValidNode(PluginFrameCached) || PluginFrameCached.removed)) {
     lastPageId = figma.currentPage.id;
     PluginFrameCached = getOrCreateNode();
   }
@@ -59,6 +63,7 @@ function GetPluginNode(): GroupNode {
 }
 
 function UpdatePluginNode(): void {
+  const date1 = Date.now();
   const pluginNode = GetPluginNode();
 
   if ((pluginNode as SceneNode).type === 'FRAME') {
@@ -66,6 +71,9 @@ function UpdatePluginNode(): void {
   }
   figma.currentPage.insertChild(figma.currentPage.children.length, pluginNode);
   pluginNode.name = PLUGIN_NAME;
+
+  const date2 = Date.now();
+  console.log(`UpdatePluginNode took ${(date2 - date1).toFixed()}ms.`);
 }
 
 class Color {
