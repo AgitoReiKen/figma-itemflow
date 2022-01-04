@@ -63,7 +63,6 @@ function GetPluginNode(): GroupNode {
 }
 
 function UpdatePluginNode(): void {
-  const date1 = Date.now();
   const pluginNode = GetPluginNode();
 
   if ((pluginNode as SceneNode).type === 'FRAME') {
@@ -71,9 +70,6 @@ function UpdatePluginNode(): void {
   }
   figma.currentPage.insertChild(figma.currentPage.children.length, pluginNode);
   pluginNode.name = PLUGIN_NAME;
-
-  const date2 = Date.now();
-  console.log(`UpdatePluginNode took ${(date2 - date1).toFixed()}ms.`);
 }
 
 class Color {
