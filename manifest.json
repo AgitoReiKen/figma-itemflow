@@ -6,5 +6,11 @@
   "editorType": [
     "figma"
   ],
-  "ui": "dist/ui.html"
+  "ui": "dist/ui.html",
+  "relaunchButtons": [
+    {
+      "command": "open",
+      "name": "Reopen ItemFlow"
+    }
+  ]
 }

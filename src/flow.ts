@@ -34,6 +34,9 @@ function CreatePluginNode_Internal(): FrameNode {
 }
 function GetPluginNode(): GroupNode {
   const pageChanged = figma.currentPage.id !== lastPageId;
+  if (pageChanged) {
+    figma.currentPage.setRelaunchData({ open: '' });
+  }
   const isValidNode = function (node: SceneNode) : boolean {
     return node != null && typeof (node) !== 'undefined' && !node.removed;
   };
