@@ -177,7 +177,7 @@ function SetStrokeCap(node: VectorNode, start: StrokeCap, end: StrokeCap) {
   node.vectorNetwork = copy;
 }
 
-function UpdateFlowAppearance(flow: VectorNode) : void {
+function UpdateFlowAppearance(flow: VectorNode, initial: boolean) : void {
   const _flowSettings = GetFlowSettings(flow);
 
   SetStrokeCap(flow, _flowSettings.strokeCap[0], _flowSettings.strokeCap[1]);
@@ -185,11 +185,12 @@ function UpdateFlowAppearance(flow: VectorNode) : void {
   flow.dashPattern = _flowSettings.dashPattern;
   flow.strokeWeight = _flowSettings.weight;
   const copy = JSON.parse(JSON.stringify(flow.strokes));
-
-  copy[0].color.r = _flowSettings.color.r;
-  copy[0].color.g = _flowSettings.color.g;
-  copy[0].color.b = _flowSettings.color.b;
-  copy[0].opacity = _flowSettings.color.a;
+  if (initial) {
+    copy[0].color.r = _flowSettings.color.r;
+    copy[0].color.g = _flowSettings.color.g;
+    copy[0].color.b = _flowSettings.color.b;
+    copy[0].opacity = _flowSettings.color.a;
+  }
   flow.strokes = copy;
 }
 // eslint-disable-next-line camelcase
@@ -272,7 +273,7 @@ function UpdateFlow_Internal(flow: VectorNode, from: SceneNode, to: SceneNode,
       }];
     }
 
-    UpdateFlowAppearance(flow);
+    UpdateFlowAppearance(flow, force);
 
     const data: FlowCoordsData = new FlowCoordsData();
     data.nodesAbsoluteTransform = [fromAbsoluteTransform, toAbsoluteTransform];
@@ -311,7 +312,7 @@ function CreateFlow(from: SceneNode, to: SceneNode, settings: FlowSettings): voi
     svg = figma.createVector();
     GetPluginNode().appendChild(svg);
   }
-  // Order is matter :)
+  // Order matter :)
   SetFlowSettings(svg, settings);
   SetFlowData(svg, [from.id, to.id]);
   UpdateFlow(svg, true);
